@@ -7,9 +7,9 @@ const supabase = createClient(
 );
 
 const ROOMS = [
-  { id: 1, name: "Zasedačka A", color: "#1a1a1a" },
-  { id: 2, name: "Zasedačka B", color: "#555" },
-  { id: 3, name: "Zasedačka C", color: "#999" },
+  { id: 1, name: "Zasedačka Lounge 1", color: "#1a1a1a" },
+  { id: 2, name: "Zasedačka Lounge 2", color: "#555" },
+  { id: 3, name: "Zasedačka 2np", color: "#999" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
