@@ -35,7 +35,7 @@ export default function App() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true });
-
+  const [darkMode, setDarkMode] = useState(false);
   const fetchReservations = useCallback(async () => {
     setLoading(true);
     const from = `${year}-${pad(month+1)}-01`;
@@ -133,7 +133,7 @@ export default function App() {
     reservations.filter(r => r.date === dateStr && visibleRooms[r.room_id]);
 
   return (
-    <div className="app">
+    <div className={`app${darkMode ? " dark" : ""}`}>
       <header className="app-header">
         <div className="header-left">
           <div className="logo">⬛</div>
@@ -142,6 +142,9 @@ export default function App() {
         <button className="btn-add" onClick={() => openNew(null)}>
           <span>+</span> Nová rezervace
         </button>
+        <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
+  {darkMode ? "☀️" : "🌙"}
+</button>
       </header>
 
       <main className="main">
