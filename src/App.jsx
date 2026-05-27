@@ -5,7 +5,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
-
+const ADMIN_PASSWORD = "Perinvest";
 const ROOMS = [
   { id: 1, name: "Zasedačka Lounge 1", color: "#1a1a1a" },
   { id: 2, name: "Zasedačka Lounge 2", color: "#555" },
@@ -27,6 +27,7 @@ export default function App() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
+  const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null); // null | { mode: "new"|"edit", data }
@@ -59,9 +60,18 @@ export default function App() {
   }
 
   function openEdit(res) {
-    setError("");
-    setForm({ ...res });
-    setModal({ mode: "edit" });
+  if (!adminUnlocked) {
+    const input = prompt("Zadej heslo pro úpravu/smazání:");
+    if (input !== ADMIN_PASSWORD) {
+      if (input !== null) alert("Špatné heslo.");
+      return;
+    }
+    setAdminUnlocked(true);
+  }
+  setError("");
+  setForm({ ...res });
+  setModal({ mode: "edit" });
+}
   }
 
   async function save() {
