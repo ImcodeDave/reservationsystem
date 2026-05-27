@@ -474,6 +474,8 @@ body {
   --line: rgba(255,255,255,0.08);
   --line-strong: rgba(255,255,255,0.15);
 }
+.dark .event-name { color: var(--ink); }
+.dark .event-time { color: var(--ink); }
 .dark .btn-add {
   background: #f0f0f0;
   color: #1a1a1a;
