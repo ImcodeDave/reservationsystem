@@ -184,8 +184,11 @@ export default function App() {
                 const dateStr = toDateStr(year, month, d);
                 const dayRes = resForDay(dateStr);
                 const isToday = dateStr === today;
-                return (
-                  <div key={d} className={`cal-cell${isToday ? " today" : ""}`}
+                const allRoomsBooked = ROOMS.every(room =>
+                 reservations.some(r => r.date === dateStr && r.room_id === room.id)
+                             );
+                     return (
+                    <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}`}
                     onClick={() => openNew(dateStr)}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
                     {dayRes.map(r => {
@@ -194,8 +197,8 @@ export default function App() {
                         <div key={r.id} className="event"
                           style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
-                          <span className="event-time">{r.start_time}</span>
-                          <span className="event-name">{r.name}</span>
+                        <span className="event-time">{r.start_time}–{r.end_time}</span>
+                        <span className="event-name">{r.name}</span>
                         </div>
                       );
                     })}
