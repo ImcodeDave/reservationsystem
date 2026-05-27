@@ -41,7 +41,14 @@ body {
   background: var(--paper);
   flex-shrink: 0;
 }
+.cal-cell.full {
+  background: #fff8f0;
+}
 
+.cal-cell.full .day-num {
+  color: #e67e22;
+  font-weight: 600;
+}
 .header-left { display: flex; align-items: center; gap: 10px; }
 
 .logo {
