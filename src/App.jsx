@@ -60,19 +60,10 @@ export default function App() {
   }
 
   function openEdit(res) {
-  if (!adminUnlocked) {
-    const input = prompt("Zadej heslo pro úpravu/smazání:");
-    if (input !== ADMIN_PASSWORD) {
-      if (input !== null) alert("Špatné heslo.");
-      return;
-    }
-    setAdminUnlocked(true);
-  }
   setError("");
   setForm({ ...res });
   setModal({ mode: "edit" });
 }
-  }
 
   async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
@@ -109,12 +100,20 @@ export default function App() {
     fetchReservations();
   }
 
-  async function remove() {
-    if (!confirm(`Smazat rezervaci „${form.name}"?`)) return;
-    await supabase.from("reservations").delete().eq("id", form.id);
-    setModal(null);
-    fetchReservations();
+ async function remove() {
+  if (!adminUnlocked) {
+    const input = prompt("Zadej heslo pro smazání:");
+    if (input !== ADMIN_PASSWORD) {
+      if (input !== null) alert("Špatné heslo.");
+      return;
+    }
+    setAdminUnlocked(true);
   }
+  if (!confirm(`Smazat rezervaci „${form.name}"?`)) return;
+  await supabase.from("reservations").delete().eq("id", form.id);
+  setModal(null);
+  fetchReservations();
+}
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
