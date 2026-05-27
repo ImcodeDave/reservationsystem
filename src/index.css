@@ -458,8 +458,8 @@ body {
 }
 .btn-delete:hover { opacity: 1; }
 /* ─── Dnešek ──────────────────────────────────────── */
-.cal-cell.today {
-  background: #fffdf5;
+.dark .cal-cell.today {
+  background: #2a2400;
   border-left: 2px solid #f0c040;
 }
 
@@ -483,6 +483,10 @@ body {
 .dark .field select { background: #2a2a2a; color: #f0f0f0; }
 .dark .cal-cell.today { background: #2a2400; border-left: 2px solid #f0c040; }
 .dark .cal-cell.full { background: #2a1a00; }
+.dark .today-num {
+  background: #f0c040;
+  color: #1a1a1a;
+}
 
 /* ─── Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
