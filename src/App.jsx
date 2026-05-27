@@ -7,9 +7,9 @@ const supabase = createClient(
 );
 const ADMIN_PASSWORD = "Perinvest";
 const ROOMS = [
-  { id: 1, name: "Zasedačka Lounge 1", color: "#1a1a1a" },
-  { id: 2, name: "Zasedačka Lounge 2", color: "#555" },
-  { id: 3, name: "Zasedačka 2np", color: "#999" },
+  { id: 1, name: "Zasedačka Lounge 1", color: "#6366f1" },
+  { id: 2, name: "Zasedačka Lounge 2", color: "#22c55e" },
+  { id: 3, name: "Zasedačka 2np", color: "#f59e0b" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
