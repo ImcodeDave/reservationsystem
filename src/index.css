@@ -457,6 +457,30 @@ body {
   opacity: 0.7;
 }
 .btn-delete:hover { opacity: 1; }
+/* ─── Dnešek ──────────────────────────────────────── */
+.cal-cell.today {
+  background: #fffdf5;
+  border-left: 2px solid #f0c040;
+}
+
+/* ─── Dark mode ───────────────────────────────────── */
+.dark {
+  --ink: #f0f0f0;
+  --ink-soft: #aaa;
+  --ink-mute: #666;
+  --paper: #141414;
+  --paper-2: #1e1e1e;
+  --paper-3: #2a2a2a;
+  --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.15);
+}
+
+.dark .cal-grid-wrap { background: #1a1a1a; }
+.dark .modal { background: #1e1e1e; }
+.dark .field input,
+.dark .field select { background: #2a2a2a; color: #f0f0f0; }
+.dark .cal-cell.today { background: #2a2400; border-left: 2px solid #f0c040; }
+.dark .cal-cell.full { background: #2a1a00; }
 
 /* ─── Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
