@@ -170,7 +170,27 @@ export default function App() {
             <p className="sidebar-stat">{reservations.length} rezervací</p>
           </div>
         </div>
-
+<div className="sidebar-section">
+  <p className="sidebar-label">Nejbližší rezervace</p>
+  {reservations
+    .filter(r => r.date >= today)
+    .slice(0, 5)
+    .map(r => {
+      const room = ROOMS.find(x => x.id === r.room_id);
+      return (
+        <div key={r.id} className="upcoming-item" onClick={() => openEdit(r)}>
+          <span className="upcoming-dot" style={{ background: room?.color }} />
+          <div className="upcoming-info">
+            <span className="upcoming-name">{r.name}</span>
+            <span className="upcoming-time">{r.date === today ? "Dnes" : r.date.slice(5).replace("-", ".")} · {r.start_time.slice(0,5)}</span>
+          </div>
+        </div>
+      );
+    })}
+  {reservations.filter(r => r.date >= today).length === 0 && (
+    <p className="upcoming-empty">Žádné nadcházející rezervace</p>
+  )}
+</div>
         <div className="calendar-area">
           <div className="cal-nav">
             <button className="nav-btn" onClick={prevMonth}>←</button>
