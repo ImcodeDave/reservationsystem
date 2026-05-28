@@ -152,7 +152,7 @@ export default function App() {
     <div className={`app${darkMode ? " dark" : ""}`}>
       <header className="app-header">
         <div className="header-left">
-          <div className="logo">⬛</div>
+         <img src="/Perinvest Group_loga-01-01.png" alt="Perinvest" style={{ height: "28px", width: "auto" }} />
           <span className="app-title">Zasedačky</span>
         </div>
         <button className="btn-add" onClick={() => openNew(null)}>
