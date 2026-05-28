@@ -247,7 +247,7 @@ export default function App() {
                         <div key={r.id} className="event"
                           style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
-                          <span className="event-time">{r.start_time}–{r.end_time}</span>
+                          <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
                           {r.people && <span className="event-people">👤 {r.people}</span>}
                         </div>
