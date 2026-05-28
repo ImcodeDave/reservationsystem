@@ -152,7 +152,7 @@ export default function App() {
     <div className={`app${darkMode ? " dark" : ""}`}>
       <header className="app-header">
         <div className="header-left">
-         <img src="/.calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
+         <img src="/calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
           <span className="app-title">Zasedačky</span>
         </div>
         <button className="btn-add" onClick={() => openNew(null)}>
@@ -232,11 +232,13 @@ export default function App() {
                 const dateStr = toDateStr(year, month, d);
                 const dayRes = resForDay(dateStr);
                 const isToday = dateStr === today;
+                const dow = (firstDow + d - 1) % 7;
+                const isWeekend = dow === 5 || dow === 6;
                 const allRoomsBooked = ROOMS.every(room =>
                   reservations.some(r => r.date === dateStr && r.room_id === room.id)
                 );
                 return (
-                  <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}`}
+                  <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}${isWeekend ? " weekend" : ""}`}
                     onClick={() => openNew(dateStr)}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
                     {dayRes.map(r => {
