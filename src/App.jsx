@@ -152,7 +152,7 @@ export default function App() {
     <div className={`app${darkMode ? " dark" : ""}`}>
       <header className="app-header">
         <div className="header-left">
-         <img src="/calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
+         <img src="/.calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
           <span className="app-title">Zasedačky</span>
         </div>
         <button className="btn-add" onClick={() => openNew(null)}>
