@@ -22,7 +22,19 @@ function todayStr() {
   const n = new Date();
   return toDateStr(n.getFullYear(), n.getMonth(), n.getDate());
 }
-
+function getSvatek(dateStr) {
+  const svátky = {
+    "01-01": "Nový rok", "01-17": "Drahoslav", "01-21": "Běla",
+    "01-24": "Milena", "02-02": "Nela", "02-05": "Dobromila",
+    "02-14": "Valentýn ❤️", "03-08": "Gabriela", "03-19": "Josef",
+    "04-23": "Vojtěch", "05-01": "Svátek práce", "05-08": "Den vítězství",
+    "05-28": "Vilém", "06-29": "Petr, Pavel", "07-05": "Cyril a Metoděj",
+    "07-06": "Jan Hus", "09-28": "Václav", "10-28": "Den vzniku ČSR",
+    "11-17": "Den boje za svobodu", "12-24": "Štědrý den",
+    "12-25": "1. svátek vánoční", "12-26": "2. svátek vánoční", "12-31": "Silvestr",
+  };
+  return svátky[dateStr.slice(5)] || null;
+}
 export default function App() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -151,7 +163,7 @@ export default function App() {
 </button>
       </header>
 
-      <main className="main">
+     <main className="main">
         <div className="sidebar">
           <div className="sidebar-section">
             <p className="sidebar-label">Místnosti</p>
@@ -169,28 +181,37 @@ export default function App() {
             <p className="sidebar-label">Tento měsíc</p>
             <p className="sidebar-stat">{reservations.length} rezervací</p>
           </div>
-        </div>
-<div className="sidebar-section">
-  <p className="sidebar-label">Nejbližší rezervace</p>
-  {reservations
-    .filter(r => r.date >= today)
-    .slice(0, 5)
-    .map(r => {
-      const room = ROOMS.find(x => x.id === r.room_id);
-      return (
-        <div key={r.id} className="upcoming-item" onClick={() => openEdit(r)}>
-          <span className="upcoming-dot" style={{ background: room?.color }} />
-          <div className="upcoming-info">
-            <span className="upcoming-name">{r.name}</span>
-            <span className="upcoming-time">{r.date === today ? "Dnes" : r.date.slice(5).replace("-", ".")} · {r.start_time.slice(0,5)}</span>
+
+          <div className="sidebar-section">
+            <p className="sidebar-label">Svátek</p>
+            <p className="sidebar-stat" style={{ fontSize: "16px" }}>
+              {getSvatek(today) || "—"}
+            </p>
+          </div>
+
+          <div className="sidebar-section">
+            <p className="sidebar-label">Nejbližší rezervace</p>
+            {reservations
+              .filter(r => r.date >= today)
+              .slice(0, 5)
+              .map(r => {
+                const room = ROOMS.find(x => x.id === r.room_id);
+                return (
+                  <div key={r.id} className="upcoming-item" onClick={() => openEdit(r)}>
+                    <span className="upcoming-dot" style={{ background: room?.color }} />
+                    <div className="upcoming-info">
+                      <span className="upcoming-name">{r.name}</span>
+                      <span className="upcoming-time">{r.date === today ? "Dnes" : r.date.slice(5).replace("-", ".")} · {r.start_time.slice(0,5)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            {reservations.filter(r => r.date >= today).length === 0 && (
+              <p className="upcoming-empty">Žádné nadcházející rezervace</p>
+            )}
           </div>
         </div>
-      );
-    })}
-  {reservations.filter(r => r.date >= today).length === 0 && (
-    <p className="upcoming-empty">Žádné nadcházející rezervace</p>
-  )}
-</div>
+
         <div className="calendar-area">
           <div className="cal-nav">
             <button className="nav-btn" onClick={prevMonth}>←</button>
@@ -212,10 +233,10 @@ export default function App() {
                 const dayRes = resForDay(dateStr);
                 const isToday = dateStr === today;
                 const allRoomsBooked = ROOMS.every(room =>
-                 reservations.some(r => r.date === dateStr && r.room_id === room.id)
-                             );
-                     return (
-                    <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}`}
+                  reservations.some(r => r.date === dateStr && r.room_id === room.id)
+                );
+                return (
+                  <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}`}
                     onClick={() => openNew(dateStr)}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
                     {dayRes.map(r => {
@@ -224,8 +245,8 @@ export default function App() {
                         <div key={r.id} className="event"
                           style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
-                        <span className="event-time">{r.start_time}–{r.end_time}</span>
-                        <span className="event-name">{r.name}</span>
+                          <span className="event-time">{r.start_time}–{r.end_time}</span>
+                          <span className="event-name">{r.name}</span>
                           {r.people && <span className="event-people">👤 {r.people}</span>}
                         </div>
                       );
