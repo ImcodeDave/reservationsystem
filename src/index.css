@@ -284,7 +284,8 @@ body {
   transition: opacity 0.1s;
 }
 .event:hover { opacity: 0.75; }
-
+.event[draggable]:hover { cursor: grab; }
+.event[draggable]:active { cursor: grabbing; opacity: 0.5; }
 .event-time {
   font-weight: 500;
   font-size: 10px;
