@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
+import html2canvas from "html2canvas";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -33,6 +34,7 @@ function getSvatek(dateStr) {
     "11-17": "Den boje za svobodu", "12-24": "Štědrý den",
     "12-25": "1. svátek vánoční", "12-26": "2. svátek vánoční", "12-31": "Silvestr",
   };
+  
   return svátky[dateStr.slice(5)] || null;
 }
 
@@ -89,6 +91,15 @@ export default function App() {
   async function moveReservation(id, newDate) {
   await supabase.from("reservations").update({ date: newDate }).eq("id", id);
   fetchReservations();
+}
+
+async function exportPng() {
+  const el = document.querySelector(".cal-grid-wrap");
+  const canvas = await html2canvas(el, { scale: 2 });
+  const link = document.createElement("a");
+  link.download = `zasedacky-${MONTHS[month]}-${year}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
 }
 
   async function save() {
@@ -172,6 +183,7 @@ export default function App() {
         <button className="btn-add" onClick={() => openNew(null)}>
           <span>+</span> Nová rezervace
         </button>
+        <button className="btn-cancel" onClick={exportPng}>📷 Export</button>
         <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
   {darkMode ? "☀️" : "🌙"}
 </button>
