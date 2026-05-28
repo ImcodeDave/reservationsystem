@@ -509,6 +509,7 @@ body {
   color: #1a1a1a;
 }
 
+
 /* ─── Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
