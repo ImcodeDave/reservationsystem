@@ -55,7 +55,7 @@ export default function App() {
 
   function openNew(date) {
     setError("");
-    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "" });
+   setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
     setModal({ mode: "new" });
   }
 
@@ -68,6 +68,7 @@ export default function App() {
   async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
     if (form.start_time >= form.end_time) { setError("Konec musí být po začátku."); return; }
+    
 
     const conflict = reservations.find(r =>
       r.id !== form.id &&
@@ -85,6 +86,7 @@ export default function App() {
         date: form.date, room_id: form.room_id,
         start_time: form.start_time, end_time: form.end_time,
         name: form.name.trim(),
+        people: form.people ? parseInt(form.people) : null,
       }]);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     } else {
@@ -92,7 +94,9 @@ export default function App() {
         date: form.date, room_id: form.room_id,
         start_time: form.start_time, end_time: form.end_time,
         name: form.name.trim(),
+        people: form.people ? parseInt(form.people) : null,
       }).eq("id", form.id);
+    
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     }
     setSaving(false);
@@ -202,6 +206,7 @@ export default function App() {
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
                         <span className="event-time">{r.start_time}–{r.end_time}</span>
                         <span className="event-name">{r.name}</span>
+                          {r.people && <span className="event-people">👤 {r.people}</span>}
                         </div>
                       );
                     })}
@@ -252,6 +257,11 @@ export default function App() {
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   onKeyDown={e => e.key === "Enter" && save()} autoFocus />
               </div>
+              <div className="field">
+                 <label>Počet osob</label>
+                 <input type="number" min="1" max="50" placeholder="Kolik lidí…" value={form.people}
+                   onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
+               </div>
               {error && <p className="form-error">{error}</p>}
             </div>
 
