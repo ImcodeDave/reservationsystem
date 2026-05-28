@@ -244,6 +244,8 @@ body {
 .cal-cell:nth-child(7n) { border-right: none; }
 .cal-cell:hover { background: var(--paper-2); }
 .cal-cell.empty { background: var(--paper); cursor: default; }
+.cal-cell.weekend { background: #f8f7f4; }
+.dark .cal-cell.weekend { background: #1c1c1c; }
 .cal-cell.empty:hover { background: var(--paper); }
 .cal-cell.today { background: #fffdf5; }
 
