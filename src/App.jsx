@@ -35,6 +35,16 @@ function getSvatek(dateStr) {
   };
   return svátky[dateStr.slice(5)] || null;
 }
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h >= 6 && h < 11) return "Dobré ráno! ☀️";
+  if (h >= 11 && h < 13) return "Dobré dopoledne!";
+  if (h >= 13 && h < 18) return "Dobré odpoledne!";
+  if (h >= 18 && h < 22) return "Dobrý večer!";
+  return "Dobrou noc! 🌙";
+}
+
 export default function App() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -213,6 +223,10 @@ export default function App() {
             {reservations.filter(r => r.date >= today).length === 0 && (
               <p className="upcoming-empty">Žádné nadcházející rezervace</p>
             )}
+          </div>
+
+          <div className="sidebar-section">
+            <p className="sidebar-greeting">{getGreeting()}</p>
           </div>
         </div>
 
