@@ -76,6 +76,10 @@ export default function App() {
   setForm({ ...res });
   setModal({ mode: "edit" });
 }
+  async function moveReservation(id, newDate) {
+  await supabase.from("reservations").update({ date: newDate }).eq("id", id);
+  fetchReservations();
+}
 
   async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
@@ -239,14 +243,18 @@ export default function App() {
                 );
                 return (
                   <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}${isWeekend ? " weekend" : ""}`}
-                    onClick={() => openNew(dateStr)}>
+                      onClick={() => openNew(dateStr)}
+                      onDragOver={e => e.preventDefault()}
+                      onDrop={e => { e.preventDefault(); const id = parseInt(e.dataTransfer.getData("id")); moveReservation(id, dateStr); }}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
                     {dayRes.map(r => {
                       const room = ROOMS.find(x => x.id === r.room_id);
                       return (
                         <div key={r.id} className="event"
                           style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
-                          onClick={e => { e.stopPropagation(); openEdit(r); }}>
+                          draggable
+                           onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData("id", r.id); }}
+                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
                           <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
                           {r.people && <span className="event-people">👤 {r.people}</span>}
