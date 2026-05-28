@@ -511,6 +511,11 @@ body {
   background: #f0c040;
   color: #1a1a1a;
 }
+.sidebar-greeting {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
 
 
 /* ─── Scrollbar ───────────────────────────────────── */
