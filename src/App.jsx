@@ -198,6 +198,11 @@ export default function App() {
 
   function openNew(date) {
     setError("");
+    const pw = prompt("Zadej heslo:");
+    if (pw !== ADMIN_PASSWORD) {
+      if (pw !== null) alert("Špatné heslo.");
+      return;
+    }
     setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
     setModal({ mode: "new" });
   }
