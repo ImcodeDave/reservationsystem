@@ -23,6 +23,7 @@ function todayStr() {
   const n = new Date();
   return toDateStr(n.getFullYear(), n.getMonth(), n.getDate());
 }
+
 function getSvatek(dateStr) {
   const jmeniny = {
     "01-01": "🎆 Nový rok — Nováček", "01-02": "Karina", "01-03": "Radmila",
@@ -169,15 +170,15 @@ export default function App() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
-  const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal] = useState(null); // null | { mode: "new"|"edit", data }
+  const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true });
   const [darkMode, setDarkMode] = useState(false);
+
   const fetchReservations = useCallback(async () => {
     setLoading(true);
     const from = `${year}-${pad(month+1)}-01`;
@@ -197,33 +198,38 @@ export default function App() {
 
   function openNew(date) {
     setError("");
-   setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
+    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
     setModal({ mode: "new" });
   }
 
   function openEdit(res) {
-  setError("");
-  setForm({ ...res });
-  setModal({ mode: "edit" });
-}
-  async function moveReservation(id, newDate) {
-  await supabase.from("reservations").update({ date: newDate }).eq("id", id);
-  fetchReservations();
-}
+    setError("");
+    const pw = prompt("Zadej heslo pro editaci:");
+    if (pw !== ADMIN_PASSWORD) {
+      if (pw !== null) alert("Špatné heslo.");
+      return;
+    }
+    setForm({ ...res });
+    setModal({ mode: "edit" });
+  }
 
-async function exportPng() {
-  const el = document.querySelector(".cal-grid-wrap");
-  const canvas = await html2canvas(el, { scale: 2 });
-  const link = document.createElement("a");
-  link.download = `zasedacky-${MONTHS[month]}-${year}.png`;
-  link.href = canvas.toDataURL();
-  link.click();
-}
+  async function moveReservation(id, newDate) {
+    await supabase.from("reservations").update({ date: newDate }).eq("id", id);
+    fetchReservations();
+  }
+
+  async function exportPng() {
+    const el = document.querySelector(".cal-grid-wrap");
+    const canvas = await html2canvas(el, { scale: 2 });
+    const link = document.createElement("a");
+    link.download = `zasedacky-${MONTHS[month]}-${year}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  }
 
   async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
     if (form.start_time >= form.end_time) { setError("Konec musí být po začátku."); return; }
-    
 
     const conflict = reservations.find(r =>
       r.id !== form.id &&
@@ -251,7 +257,6 @@ async function exportPng() {
         name: form.name.trim(),
         people: form.people ? parseInt(form.people) : null,
       }).eq("id", form.id);
-    
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     }
     setSaving(false);
@@ -259,20 +264,12 @@ async function exportPng() {
     fetchReservations();
   }
 
- async function remove() {
-  if (!adminUnlocked) {
-    const input = prompt("Zadej heslo pro smazání:");
-    if (input !== ADMIN_PASSWORD) {
-      if (input !== null) alert("Špatné heslo.");
-      return;
-    }
-    setAdminUnlocked(true);
+  async function remove() {
+    if (!confirm(`Smazat rezervaci „${form.name}"?`)) return;
+    await supabase.from("reservations").delete().eq("id", form.id);
+    setModal(null);
+    fetchReservations();
   }
-  if (!confirm(`Smazat rezervaci „${form.name}"?`)) return;
-  await supabase.from("reservations").delete().eq("id", form.id);
-  setModal(null);
-  fetchReservations();
-}
 
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
@@ -283,7 +280,6 @@ async function exportPng() {
     else setMonth(m => m + 1);
   }
 
-  // Build calendar grid
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDow = (() => { let d = new Date(year, month, 1).getDay(); return d === 0 ? 6 : d - 1; })();
   const today = todayStr();
@@ -295,7 +291,7 @@ async function exportPng() {
     <div className={`app${darkMode ? " dark" : ""}`}>
       <header className="app-header">
         <div className="header-left">
-         <img src="/calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
+          <img src="/calendar.svg" alt="Zasedačky" style={{ height: "24px", width: "auto" }} />
           <span className="app-title">Zasedačky</span>
         </div>
         <button className="btn-add" onClick={() => openNew(null)}>
@@ -303,11 +299,11 @@ async function exportPng() {
         </button>
         <button className="btn-cancel" onClick={exportPng}>📷 Export</button>
         <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
-  {darkMode ? "☀️" : "🌙"}
-</button>
+          {darkMode ? "☀️" : "🌙"}
+        </button>
       </header>
 
-     <main className="main">
+      <main className="main">
         <div className="sidebar">
           <div className="sidebar-section">
             <p className="sidebar-label">Místnosti</p>
@@ -386,10 +382,11 @@ async function exportPng() {
                   reservations.some(r => r.date === dateStr && r.room_id === room.id)
                 );
                 return (
-                  <div key={d} className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}${isWeekend ? " weekend" : ""}`}
-                      onClick={() => openNew(dateStr)}
-                      onDragOver={e => e.preventDefault()}
-                      onDrop={e => { e.preventDefault(); const id = parseInt(e.dataTransfer.getData("id")); moveReservation(id, dateStr); }}>
+                  <div key={d}
+                    className={`cal-cell${isToday ? " today" : ""}${allRoomsBooked ? " full" : ""}${isWeekend ? " weekend" : ""}`}
+                    onClick={() => openNew(dateStr)}
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => { e.preventDefault(); const id = parseInt(e.dataTransfer.getData("id")); moveReservation(id, dateStr); }}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
                     {dayRes.map(r => {
                       const room = ROOMS.find(x => x.id === r.room_id);
@@ -397,8 +394,8 @@ async function exportPng() {
                         <div key={r.id} className="event"
                           style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                           draggable
-                           onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData("id", r.id); }}
-                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
+                          onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData("id", r.id); }}
+                          onClick={e => { e.stopPropagation(); openEdit(r); }}>
                           <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
                           {r.people && <span className="event-people">👤 {r.people}</span>}
@@ -453,10 +450,10 @@ async function exportPng() {
                   onKeyDown={e => e.key === "Enter" && save()} autoFocus />
               </div>
               <div className="field">
-                 <label>Počet osob</label>
-                 <input type="number" min="1" max="50" placeholder="Kolik lidí…" value={form.people}
-                   onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
-               </div>
+                <label>Počet osob</label>
+                <input type="number" min="1" max="50" placeholder="Kolik lidí…" value={form.people}
+                  onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
+              </div>
               {error && <p className="form-error">{error}</p>}
             </div>
 
