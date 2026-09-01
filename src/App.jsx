@@ -8,9 +8,9 @@ const supabase = createClient(
 );
 const ADMIN_PASSWORD = "202626";
 const ROOMS = [
-  { id: 1, name: "Zasedačka Lounge 1", color: "#6366f1" },
-  { id: 2, name: "Zasedačka Lounge 2", color: "#22c55e" },
-  { id: 3, name: "Zasedačka 2np", color: "#f59e0b" },
+  { id: 1, name: "ALL STARS (lounge)", color: "#6366f1" },
+  { id: 2, name: "CENTRE COURT (lounge)", color: "#22c55e" },
+  { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
