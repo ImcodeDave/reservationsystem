@@ -516,6 +516,85 @@ body {
   color: var(--ink-soft);
   font-style: italic;
 }
+/* ─── Mobile ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 1rem;
+    gap: 8px;
+  }
+
+  .app-title { font-size: 15px; }
+
+  .main {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem;
+    gap: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: visible;
+  }
+
+  .sidebar-section {
+    min-width: 140px;
+    flex: 1;
+  }
+
+  .sidebar-greeting { display: none; }
+
+  .calendar-area {
+    padding: 1rem;
+    overflow: visible;
+  }
+
+  .cal-grid-wrap {
+    overflow: visible;
+  }
+
+  .cal-grid {
+    overflow: visible;
+  }
+
+  .cal-cell {
+    min-height: 60px;
+    padding: 3px;
+  }
+
+  .cal-head-cell {
+    font-size: 9px;
+    padding: 5px 0;
+  }
+
+  .day-num {
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .event {
+    flex-direction: column;
+    gap: 0;
+    padding: 2px 4px;
+  }
+
+  .event-time { font-size: 9px; }
+  .event-name { font-size: 9px; }
+  .event-people { display: none; }
+
+  .modal {
+    width: calc(100vw - 2rem);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .cal-title { font-size: 18px; min-width: unset; }
+}
 
 
 /* ─── Scrollbar ───────────────────────────────────── */
