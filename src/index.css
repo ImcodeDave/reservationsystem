@@ -203,7 +203,31 @@ body {
 .cal-month-label {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
+  padding: 0.875rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+
+.cal-month-label h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.cal-month-label-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cal-month-label-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .cal-month-label h2 {
