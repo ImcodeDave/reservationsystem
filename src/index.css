@@ -255,9 +255,11 @@ body {
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
   background: var(--bg-2);
+
 }
 
 .cal-loading {
@@ -270,7 +272,7 @@ body {
   color: var(--ink-mute);
   background: rgba(15,15,15,0.7);
   z-index: 10;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .cal-head {
@@ -557,7 +559,14 @@ body {
 
   .room-pill { font-size: 11px; padding: 4px 10px; }
 
-  .cal-main { padding: 0.75rem 1rem; }
+  .cal-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  }
 
   .cal-cell { min-height: 70px; padding: 4px; }
 
