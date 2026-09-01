@@ -174,9 +174,8 @@ export default function App() {
       {/* ── Top bar ── */}
       <header className="app-header">
         <div className="header-left">
-          <img src="/calendar.svg" alt="Zasedačky" style={{ height: "20px", width: "auto", opacity: 0.7 }} />
-          <span className="app-title">Zasedačky</span>
-          <span className="header-count">{reservations.length} rezervací</span>
+            <img src="/calendar.svg" alt="Zasedačky" style={{ height: "20px", width: "auto", opacity: 0.7 }} />
+            <span className="app-title">Zasedačky</span>
         </div>
 
         <div className="header-center">
@@ -193,21 +192,26 @@ export default function App() {
         </div>
 
         <div className="header-right">
-          <button className="btn-today" onClick={goToday}>Dnes</button>
-          <div className="nav-group">
-            <button className="nav-btn" onClick={prevMonth}>←</button>
-            <button className="nav-btn" onClick={nextMonth}>→</button>
-          </div>
-          <button className="btn-export" onClick={exportPng}>📷</button>
-          <button className="btn-add" onClick={() => openNew(null)}>+ Nová rezervace</button>
+            <button className="btn-export" onClick={exportPng}>📷</button>
+            <button className="btn-add" onClick={() => openNew(null)}>+ Nová rezervace</button>
         </div>
       </header>
 
       {/* ── Calendar ── */}
       <main className="cal-main">
         <div className="cal-month-label">
-          <h2>{MONTHS[month]} {year}</h2>
-          {getSvatek(today) && <span className="svatek-badge">{getSvatek(today)}</span>}
+          <div className="cal-month-label-left">
+            <h2>{MONTHS[month]} {year}</h2>
+            {getSvatek(today) && <span className="svatek-badge">{getSvatek(today)}</span>}
+          </div>
+          <div className="cal-month-label-right">
+            <span className="header-count">{reservations.length} rezervací</span>
+            <button className="btn-today" onClick={goToday}>Dnes</button>
+            <div className="nav-group">
+              <button className="nav-btn" onClick={prevMonth}>←</button>
+              <button className="nav-btn" onClick={nextMonth}>→</button>
+            </div>
+          </div>
         </div>
 
         <div className="cal-grid-wrap">
