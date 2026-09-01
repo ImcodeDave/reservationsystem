@@ -6,7 +6,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
-const ADMIN_PASSWORD = "Perinvest";
+const ADMIN_PASSWORD = "202626";
 const ROOMS = [
   { id: 1, name: "ALL STARS (lounge)", color: "#6366f1" },
   { id: 2, name: "CENTRE COURT (lounge)", color: "#22c55e" },
