@@ -328,12 +328,6 @@ function startDelete() {
   setPasswordError("");
   action();
 }
-  const action = passwordModal.action;
-  setPasswordModal(null);
-  setPasswordInput("");
-  setPasswordError("");
-  action();
-}
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
     else setMonth(m => m - 1);
