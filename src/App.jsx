@@ -220,8 +220,6 @@ export default function App() {
   setPasswordInput("");
   setPasswordError("");
   setPasswordModal({ action: () => setModal({ mode: "edit" }), label: "editaci" });
-}
-  setModal({ mode: "edit" });
   }
   function startDelete() {
   setPasswordInput("");
