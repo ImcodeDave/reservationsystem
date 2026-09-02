@@ -466,10 +466,10 @@ export default function App() {
             const room = ROOMS.find(r => r.id === form.room_id);
             return (
               <>
-                <div className="view-row"><span className="view-label">Mistnost</span><span className="view-value"><span style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
+                <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
                 <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
-                <div className="view-row"><span className="view-label">Cas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
-                {form.people && <div className="view-row"><span className="view-label">Pocet osob</span><span className="view-value">{form.people}</span></div>}
+                <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
+                {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">{form.people}</span></div>}
               </>
             );
           })()}
