@@ -502,11 +502,13 @@ export default function App() {
           <div className="modal-footer">
             {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
             <div style={{ flex: 1 }} />
-            <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
-            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám…" : "Uložit"}</button>
+                      <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám…" : "Uložit"}</button>
           </div>
         </>
       )}
     </div>
   </div>
 )}
+    </div>
+  );
+}
