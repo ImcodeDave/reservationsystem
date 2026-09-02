@@ -279,7 +279,24 @@ export default function App() {
     setModal(null);
     fetchReservations();
   }
-
+  async function requestCancel() {
+  const name = prompt("Zadej své jméno:");
+  if (!name?.trim()) return;
+  const room = ROOMS.find(r => r.id === form.room_id);
+  await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-request`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({
+      name: name.trim(),
+      reservation: { ...form, room_name: room?.name },
+    }),
+  });
+  alert("Žádost o zrušení byla odeslána.");
+  setModal(null);
+}
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
     else setMonth(m => m - 1);
@@ -477,11 +494,10 @@ export default function App() {
             </div>
             {error && <p className="form-error">{error}</p>}
           </div>
-          <div className="modal-footer">
-            {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
-            <div style={{ flex: 1 }} />
-            <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
-            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám…" : "Uložit"}</button>
+          <div className="modal-footer" style={{ marginTop: "8px" }}>
+                <button className="btn-delete" onClick={requestCancel}>Zažádat o zrušení</button>
+                <div style={{ flex: 1 }} />
+                <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
           </div>
         </>
       )}
