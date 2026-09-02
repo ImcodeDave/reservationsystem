@@ -179,6 +179,9 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelName, setCancelName] = useState("");
+  const [passwordModal, setPasswordModal] = useState(null); // null | { action: fn, label: string }
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const fetchReservations = useCallback(async () => {
     setLoading(true);
     const from = `${year}-${pad(month+1)}-01`;
@@ -197,39 +200,34 @@ export default function App() {
   useEffect(() => { fetchReservations(); }, [fetchReservations]);
 
   function openNew(date) {
-    setError("");
-    const pw = prompt("Zadej heslo:");
-    if (pw !== ADMIN_PASSWORD) {
-      if (pw !== null) alert("Špatné heslo.");
-      return;
-    }
-    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
-    setModal({ mode: "new" });
-  }
-
+  setError("");
+  setPasswordInput("");
+  setPasswordError("");
+  setPasswordModal({
+    action: () => {
+      setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
+      setModal({ mode: "new" });
+    },
+    label: "novou rezervaci"
+  });
+}
   function openEdit(res) {
   setError("");
   setForm({ ...res });
   setModal({ mode: "view" });
   }
   function startEdit() {
-  const pw = prompt("Zadej heslo pro editaci:");
-  if (pw !== ADMIN_PASSWORD) {
-    if (pw !== null) alert("Špatné heslo.");
-    return;
-  }
+  setPasswordInput("");
+  setPasswordError("");
+  setPasswordModal({ action: () => setModal({ mode: "edit" }), label: "editaci" });
+}
   setModal({ mode: "edit" });
   }
   function startDelete() {
-  const pw = prompt("Zadej heslo pro smazání:");
-  if (pw !== ADMIN_PASSWORD) {
-    if (pw !== null) alert("Špatné heslo.");
-    return;
-  }
-  remove();
+  setPasswordInput("");
+  setPasswordError("");
+  setPasswordModal({ action: remove, label: "smazání" });
 }
-
-
   async function moveReservation(id, newDate) {
     await supabase.from("reservations").update({ date: newDate }).eq("id", id);
     fetchReservations();
@@ -305,6 +303,17 @@ export default function App() {
   setCancelName("");
   setModal(null);
   alert("Žádost o zrušení byla odeslána.");
+}
+  function checkPassword() {
+  if (passwordInput !== ADMIN_PASSWORD) {
+    setPasswordError("Špatné heslo.");
+    return;
+  }
+  const action = passwordModal.action;
+  setPasswordModal(null);
+  setPasswordInput("");
+  setPasswordError("");
+  action();
 }
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
@@ -517,6 +526,31 @@ export default function App() {
           </div>
         </>
       )}
+    </div>
+  </div>
+)}
+      {passwordModal && (
+  <div className="modal-overlay" onClick={() => setPasswordModal(null)}>
+    <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal-header">
+        <h3>Zadej heslo</h3>
+        <button className="modal-close" onClick={() => setPasswordModal(null)}>x</button>
+      </div>
+      <div className="modal-body">
+        <div className="field">
+          <label>Heslo pro {passwordModal.label}</label>
+          <input type="password" placeholder="Heslo..." value={passwordInput}
+            onChange={e => setPasswordInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && checkPassword()}
+            autoFocus />
+        </div>
+        {passwordError && <p className="form-error">{passwordError}</p>}
+      </div>
+      <div className="modal-footer">
+        <div style={{ flex: 1 }} />
+        <button className="btn-cancel" onClick={() => setPasswordModal(null)}>Zrušit</button>
+        <button className="btn-save" onClick={checkPassword}>Potvrdit</button>
+      </div>
     </div>
   </div>
 )}
