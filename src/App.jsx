@@ -506,14 +506,14 @@ export default function App() {
               </div>
             </div>
             <div className="field">
-              <label>Jmeno / nazev</label>
+              <label>Jméno / Název</label>
               <input type="text" placeholder="Kdo nebo co..." value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 onKeyDown={e => e.key === "Enter" && save()} autoFocus />
             </div>
             <div className="field">
-              <label>Pocet osob</label>
-              <input type="number" min="1" max="50" placeholder="Kolik lidi..." value={form.people}
+              <label>Počet osob</label>
+              <input type="number" min="1" max="50" placeholder="Počet lidí..." value={form.people}
                 onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
             </div>
             {error && <p className="form-error">{error}</p>}
@@ -521,8 +521,8 @@ export default function App() {
           <div className="modal-footer">
             {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
             <div style={{ flex: 1 }} />
-            <button className="btn-cancel" onClick={() => setModal(null)}>Zrusit</button>
-            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukladam..." : "Ulozit"}</button>
+            <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
+            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám..." : "Uložit"}</button>
           </div>
         </>
       )}
