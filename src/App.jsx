@@ -182,6 +182,7 @@ export default function App() {
   const [passwordModal, setPasswordModal] = useState(null); // null | { action: fn, label: string }
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [savedForm, setSavedForm] = useState({});
   const fetchReservations = useCallback(async () => {
     setLoading(true);
     const from = `${year}-${pad(month+1)}-01`;
@@ -214,8 +215,9 @@ export default function App() {
   function openEdit(res) {
   setError("");
   setForm({ ...res });
+  setSavedForm({ ...res });
   setModal({ mode: "view" });
-  }
+}
   function startEdit() {
   setPasswordInput("");
   setPasswordError("");
@@ -285,7 +287,7 @@ export default function App() {
   }
   async function requestCancel() {
   if (!cancelName.trim()) return;
-  const room = ROOMS.find(r => r.id === form.room_id);
+  const room = ROOMS.find(r => r.id === savedForm.room_id);
   await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-request`, {
     method: "POST",
     headers: {
@@ -294,13 +296,13 @@ export default function App() {
     },
     body: JSON.stringify({
       name: cancelName.trim(),
-      reservation: { ...form, room_name: room?.name },
+      reservation: { ...savedForm, room_name: room?.name },
     }),
   });
   setCancelModal(false);
   setCancelName("");
   setModal(null);
-  alert("Žádost o zrušení byla odeslána.");
+  alert("Zadost o zruseni byla odeslana.");
 }
   function checkPassword() {
   if (passwordInput !== ADMIN_PASSWORD) {
