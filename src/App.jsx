@@ -458,7 +458,7 @@ export default function App() {
   <div className="modal-overlay" onClick={() => setModal(null)}>
     <div className="modal" onClick={e => e.stopPropagation()}>
       <div className="modal-header">
-        <h3>{modal.mode === "new" ? "Nova rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
+        <h3>{modal.mode === "new" ? "Nová rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
         <button className="modal-close" onClick={() => setModal(null)}>x</button>
       </div>
 
