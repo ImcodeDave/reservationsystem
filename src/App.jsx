@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 import html2canvas from "html2canvas";
-
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -178,7 +177,8 @@ export default function App() {
   const [error, setError] = useState("");
   const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true });
   const [darkMode, setDarkMode] = useState(false);
-
+  const [cancelModal, setCancelModal] = useState(false);
+  const [cancelName, setCancelName] = useState("");
   const fetchReservations = useCallback(async () => {
     setLoading(true);
     const from = `${year}-${pad(month+1)}-01`;
@@ -288,8 +288,7 @@ export default function App() {
     fetchReservations();
   }
   async function requestCancel() {
-  const name = prompt("Zadej své jméno:");
-  if (!name?.trim()) return;
+  if (!cancelName.trim()) return;
   const room = ROOMS.find(r => r.id === form.room_id);
   await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-request`, {
     method: "POST",
@@ -298,12 +297,14 @@ export default function App() {
       "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
     },
     body: JSON.stringify({
-      name: name.trim(),
+      name: cancelName.trim(),
       reservation: { ...form, room_name: room?.name },
     }),
   });
-  alert("Žádost o zrušení byla odeslána.");
+  setCancelModal(false);
+  setCancelName("");
   setModal(null);
+  alert("Žádost o zrušení byla odeslána.");
 }
   function prevMonth() {
     if (month === 0) { setMonth(11); setYear(y => y - 1); }
@@ -466,7 +467,7 @@ export default function App() {
             );
           })()}
           <div className="modal-footer" style={{ marginTop: "8px" }}>
-            <button className="btn-request" onClick={requestCancel}>Zazadat o zruseni</button>
+            <button className="btn-request" onClick={() => setCancelModal(true)}>Zažádat o zrušení</button>
             <div style={{ flex: 1 }} />
             <button className="btn-cancel" onClick={startDelete}>Smazat</button>
             <button className="btn-save" onClick={startEdit}>Upravit</button>
@@ -516,6 +517,30 @@ export default function App() {
           </div>
         </>
       )}
+    </div>
+  </div>
+)}
+      {cancelModal && (
+  <div className="modal-overlay" onClick={() => setCancelModal(false)}>
+    <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal-header">
+        <h3>Zažádat o zrušení</h3>
+        <button className="modal-close" onClick={() => setCancelModal(false)}>x</button>
+      </div>
+      <div className="modal-body">
+        <div className="field">
+          <label>Vaše jméno</label>
+          <input type="text" placeholder="Zadej své jméno..." value={cancelName}
+            onChange={e => setCancelName(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && requestCancel()}
+            autoFocus />
+        </div>
+      </div>
+      <div className="modal-footer">
+        <div style={{ flex: 1 }} />
+        <button className="btn-cancel" onClick={() => setCancelModal(false)}>Zrušit</button>
+        <button className="btn-save" onClick={requestCancel}>Odeslat žádost</button>
+      </div>
     </div>
   </div>
 )}
