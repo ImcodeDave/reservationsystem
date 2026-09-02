@@ -208,14 +208,18 @@ export default function App() {
   }
 
   function openEdit(res) {
-    setError("");
-    const pw = prompt("Zadej heslo pro editaci:");
-    if (pw !== ADMIN_PASSWORD) {
-      if (pw !== null) alert("Špatné heslo.");
-      return;
-    }
-    setForm({ ...res });
-    setModal({ mode: "edit" });
+  setError("");
+  setForm({ ...res });
+  setModal({ mode: "view" });
+  }
+  function startEdit() {
+  const pw = prompt("Zadej heslo pro editaci:");
+  if (pw !== ADMIN_PASSWORD) {
+    if (pw !== null) alert("Špatné heslo.");
+    return;
+  }
+  setModal({ mode: "edit" });
+}
   }
 
   async function moveReservation(id, newDate) {
@@ -416,65 +420,71 @@ export default function App() {
       </main>
 
       {modal && (
-        <div className="modal-overlay" onClick={() => setModal(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{modal.mode === "new" ? "Nová rezervace" : "Upravit rezervaci"}</h3>
-              <button className="modal-close" onClick={() => setModal(null)}>✕</button>
-            </div>
+  <div className="modal-overlay" onClick={() => setModal(null)}>
+    <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal-header">
+        <h3>{modal.mode === "new" ? "Nová rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
+        <button className="modal-close" onClick={() => setModal(null)}>✕</button>
+      </div>
 
-            <div className="modal-body">
-              <div className="field">
-                <label>Datum</label>
-                <input type="date" value={form.date}
-                  onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
-              </div>
-              <div className="field">
-                <label>Místnost</label>
-                <select value={form.room_id}
-                  onChange={e => setForm(f => ({ ...f, room_id: parseInt(e.target.value) }))}>
-                  {ROOMS.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-                </select>
-              </div>
-              <div className="field field-row">
-                <div>
-                  <label>Od</label>
-                  <input type="time" value={form.start_time}
-                    onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} />
-                </div>
-                <div>
-                  <label>Do</label>
-                  <input type="time" value={form.end_time}
-                    onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
-                </div>
-              </div>
-              <div className="field">
-                <label>Jméno / název</label>
-                <input type="text" placeholder="Kdo nebo co…" value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  onKeyDown={e => e.key === "Enter" && save()} autoFocus />
-              </div>
-              <div className="field">
-                <label>Počet osob</label>
-                <input type="number" min="1" max="50" placeholder="Kolik lidí…" value={form.people}
-                  onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
-              </div>
-              {error && <p className="form-error">{error}</p>}
-            </div>
-
-            <div className="modal-footer">
-              {modal.mode === "edit" && (
-                <button className="btn-delete" onClick={remove}>Smazat</button>
-              )}
-              <div style={{ flex: 1 }} />
-              <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
-              <button className="btn-save" onClick={save} disabled={saving}>
-                {saving ? "Ukládám…" : "Uložit"}
-              </button>
-            </div>
+      {modal.mode === "view" ? (
+        <div className="modal-body">
+          {(() => { const room = ROOMS.find(r => r.id === form.room_id); return (
+            <>
+              <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span className="event-dot" style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
+              <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
+              <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}–{form.end_time?.slice(0,5)}</span></div>
+              {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">👤 {form.people}</span></div>}
+            </>
+          );})()}
+          <div className="modal-footer" style={{ marginTop: "8px" }}>
+            <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
           </div>
         </div>
+      ) : (
+        <>
+          <div className="modal-body">
+            <div className="field">
+              <label>Datum</label>
+              <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+            </div>
+            <div className="field">
+              <label>Místnost</label>
+              <select value={form.room_id} onChange={e => setForm(f => ({ ...f, room_id: parseInt(e.target.value) }))}>
+                {ROOMS.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+              </select>
+            </div>
+            <div className="field field-row">
+              <div>
+                <label>Od</label>
+                <input type="time" value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} />
+              </div>
+              <div>
+                <label>Do</label>
+                <input type="time" value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
+              </div>
+            </div>
+            <div className="field">
+              <label>Jméno / název</label>
+              <input type="text" placeholder="Kdo nebo co…" value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                onKeyDown={e => e.key === "Enter" && save()} autoFocus />
+            </div>
+            <div className="field">
+              <label>Počet osob</label>
+              <input type="number" min="1" max="50" placeholder="Kolik lidí…" value={form.people}
+                onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
+            </div>
+            {error && <p className="form-error">{error}</p>}
+          </div>
+          <div className="modal-footer">
+            {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
+            <div style={{ flex: 1 }} />
+            <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
+            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám…" : "Uložit"}</button>
+          </div>
+        </>
       )}
     </div>
-  );
-}
+  </div>
+)}
