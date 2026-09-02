@@ -219,6 +219,14 @@ export default function App() {
     return;
   }
   setModal({ mode: "edit" });
+  }
+  function startDelete() {
+  const pw = prompt("Zadej heslo pro smazání:");
+  if (pw !== ADMIN_PASSWORD) {
+    if (pw !== null) alert("Špatné heslo.");
+    return;
+  }
+  remove();
 }
 
 
@@ -457,12 +465,12 @@ export default function App() {
               </>
             );
           })()}
-          <div className="modal-footer" style={{ marginTop: "8px" }}>
+           <div className="modal-footer" style={{ marginTop: "8px" }}>
             <button className="btn-request" onClick={requestCancel}>Zažádat o zrušení</button>
             <div style={{ flex: 1 }} />
+            <button className="btn-cancel" onClick={startDelete}>🗑 Smazat</button>
             <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
           </div>
-        </div>
       ) : (
         <>
           <div className="modal-body">
