@@ -468,7 +468,7 @@ export default function App() {
            <div className="modal-footer" style={{ marginTop: "8px" }}>
             <button className="btn-request" onClick={requestCancel}>Zažádat o zrušení</button>
             <div style={{ flex: 1 }} />
-            <button className="btn-cancel" onClick={startDelete}>🗑 Smazat</button>
+            <button className="btn-cancel" onClick={startDelete}>Smazat</button>
             <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
           </div>
       ) : (
