@@ -202,6 +202,11 @@ export default function App() {
 
   function openNew(date) {
   setError("");
+  if (sessionStorage.getItem("admin_unlocked")) {
+    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
+    setModal({ mode: "new" });
+    return;
+  }
   setPasswordInput("");
   setPasswordError("");
   setPasswordModal({
@@ -219,11 +224,19 @@ export default function App() {
   setModal({ mode: "view" });
 }
   function startEdit() {
+  if (sessionStorage.getItem("admin_unlocked")) {
+    setModal({ mode: "edit" });
+    return;
+  }
   setPasswordInput("");
   setPasswordError("");
   setPasswordModal({ action: () => setModal({ mode: "edit" }), label: "editaci" });
+}
+function startDelete() {
+  if (sessionStorage.getItem("admin_unlocked")) {
+    remove();
+    return;
   }
-  function startDelete() {
   setPasswordInput("");
   setPasswordError("");
   setPasswordModal({ action: remove, label: "smazání" });
@@ -232,7 +245,6 @@ export default function App() {
     await supabase.from("reservations").update({ date: newDate }).eq("id", id);
     fetchReservations();
   }
-
   async function exportPng() {
     const el = document.querySelector(".cal-grid-wrap");
     const canvas = await html2canvas(el, { scale: 2 });
@@ -308,7 +320,14 @@ export default function App() {
   if (passwordInput !== ADMIN_PASSWORD) {
     setPasswordError("Špatné heslo.");
     return;
-  }
+    }
+  sessionStorage.setItem("admin_unlocked", "1");
+  const action = passwordModal.action;
+  setPasswordModal(null);
+  setPasswordInput("");
+  setPasswordError("");
+  action();
+}
   const action = passwordModal.action;
   setPasswordModal(null);
   setPasswordInput("");
