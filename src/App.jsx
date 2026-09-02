@@ -573,7 +573,7 @@ export default function App() {
       <div className="modal-footer">
         <div style={{ flex: 1 }} />
         <button className="btn-cancel" onClick={() => setCancelModal(false)}>Zrušit</button>
-        <button className="btn-save" onClick={requestCancel}>Odeslat žádost</button>
+        <button className="btn-save" onClick={e => { e.stopPropagation(); requestCancel(); }}>Odeslat žádost</button>
       </div>
     </div>
   </div>
