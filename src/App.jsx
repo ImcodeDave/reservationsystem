@@ -220,7 +220,7 @@ export default function App() {
   }
   setModal({ mode: "edit" });
 }
-  }
+
 
   async function moveReservation(id, newDate) {
     await supabase.from("reservations").update({ date: newDate }).eq("id", id);
@@ -446,15 +446,20 @@ export default function App() {
 
       {modal.mode === "view" ? (
         <div className="modal-body">
-          {(() => { const room = ROOMS.find(r => r.id === form.room_id); return (
-            <>
-              <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span className="event-dot" style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
-              <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
-              <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}–{form.end_time?.slice(0,5)}</span></div>
-              {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">👤 {form.people}</span></div>}
-            </>
-          );})()}
+          {(() => {
+            const room = ROOMS.find(r => r.id === form.room_id);
+            return (
+              <>
+                <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
+                <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
+                <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}–{form.end_time?.slice(0,5)}</span></div>
+                {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">👤 {form.people}</span></div>}
+              </>
+            );
+          })()}
           <div className="modal-footer" style={{ marginTop: "8px" }}>
+            <button className="btn-request" onClick={requestCancel}>Zažádat o zrušení</button>
+            <div style={{ flex: 1 }} />
             <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
           </div>
         </div>
@@ -494,10 +499,11 @@ export default function App() {
             </div>
             {error && <p className="form-error">{error}</p>}
           </div>
-          <div className="modal-footer" style={{ marginTop: "8px" }}>
-                <button className="btn-delete" onClick={requestCancel}>Zažádat o zrušení</button>
-                <div style={{ flex: 1 }} />
-                <button className="btn-save" onClick={startEdit}>✏️ Upravit</button>
+          <div className="modal-footer">
+            {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
+            <div style={{ flex: 1 }} />
+            <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
+            <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám…" : "Uložit"}</button>
           </div>
         </>
       )}
