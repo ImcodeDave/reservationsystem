@@ -203,7 +203,7 @@ export default function App() {
   function openNew(date) {
   setError("");
   if (sessionStorage.getItem("admin_unlocked")) {
-    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "" });
+    setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "", pomoc: false });
     setModal({ mode: "new" });
     return;
   }
@@ -271,11 +271,12 @@ function startDelete() {
     setError("");
     if (modal.mode === "new") {
       const { error } = await supabase.from("reservations").insert([{
-        date: form.date, room_id: form.room_id,
-        start_time: form.start_time, end_time: form.end_time,
-        name: form.name.trim(),
-        people: form.people ? parseInt(form.people) : null,
-      }]);
+      date: form.date, room_id: form.room_id,
+      start_time: form.start_time, end_time: form.end_time,
+      name: form.name.trim(),
+      people: form.people ? parseInt(form.people) : null,
+      pomoc: !!form.pomoc,
+    }]);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     } else {
       const { error } = await supabase.from("reservations").update({
@@ -455,7 +456,8 @@ function startDelete() {
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
                           <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
-                          {r.people && <span className="event-people">👤 {r.people}</span>}
+                         {r.people && <span className="event-people">👤 {r.people}</span>}
+                          {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", display: "inline-block", marginLeft: 4, flexShrink: 0 }} />}
                         </div>
                       );
                     })}
@@ -474,8 +476,7 @@ function startDelete() {
         <h3>{modal.mode === "new" ? "Nová rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
         <button className="modal-close" onClick={() => setModal(null)}>x</button>
       </div>
-
-      {modal.mode === "view" ? (
+     {modal.mode === "view" ? (
         <div className="modal-body">
           {(() => {
             const room = ROOMS.find(r => r.id === form.room_id);
@@ -485,16 +486,17 @@ function startDelete() {
                 <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
                 <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
                 {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">{form.people}</span></div>}
+                {form.pomoc && <div className="view-row"><span className="view-label">Pomoc</span><span className="view-value" style={{ color: "#e74c3c" }}>Ano</span></div>}
               </>
-            );
-          })()}
-          <div className="modal-footer" style={{ marginTop: "8px" }}>
-            <button className="btn-request" onClick={() => setCancelModal(true)}>Zažádat o zrušení</button>
-            <div style={{ flex: 1 }} />
-            <button className="btn-cancel" onClick={startDelete}>Smazat</button>
-            <button className="btn-save" onClick={startEdit}>Upravit</button>
-          </div>
-        </div>
+              );
+                })()}
+                <div className="modal-footer" style={{ marginTop: "8px" }}>
+                  <button className="btn-request" onClick={() => setCancelModal(true)}>Zažádat o zrušení</button>
+                  <div style={{ flex: 1 }} />
+                  <button className="btn-cancel" onClick={startDelete}>Smazat</button>
+                  <button className="btn-save" onClick={startEdit}>Upravit</button>
+                </div>
+              </div>
       ) : (
         <>
           <div className="modal-body">
@@ -524,10 +526,16 @@ function startDelete() {
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 onKeyDown={e => e.key === "Enter" && save()} autoFocus />
             </div>
-            <div className="field">
+                        <div className="field">
               <label>Počet osob</label>
               <input type="number" min="1" max="50" placeholder="Počet lidí..." value={form.people}
                 onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
+            </div>
+            <div className="field" style={{ flexDirection: "row", alignItems: "center", gap: "10px" }}>
+              <input type="checkbox" id="pomoc" checked={!!form.pomoc}
+                onChange={e => setForm(f => ({ ...f, pomoc: e.target.checked }))}
+                style={{ width: "18px", height: "18px", cursor: "pointer" }} />
+              <label htmlFor="pomoc" style={{ textTransform: "none", fontSize: "14px", letterSpacing: 0, cursor: "pointer" }}>Pomoc</label>
             </div>
             {error && <p className="form-error">{error}</p>}
           </div>
