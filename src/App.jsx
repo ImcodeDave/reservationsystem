@@ -275,7 +275,8 @@ function startDelete() {
       start_time: form.start_time, end_time: form.end_time,
       name: form.name.trim(),
       people: form.people ? parseInt(form.people) : null,
-      pomoc: !!form.pomoc,
+        pomoc: !!form.pomoc,
+      }).eq("id", form.id);
     }]);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     } else {
