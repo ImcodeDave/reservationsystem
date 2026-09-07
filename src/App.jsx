@@ -41,6 +41,12 @@ function addMonths(dateStr, months) {
   d.setMonth(d.getMonth() + months);
   return d.toISOString().split("T")[0];
 }
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
 
 function getSvatek(dateStr) {
   const jmeniny = {
@@ -202,6 +208,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [savedForm, setSavedForm] = useState({});
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const fetchReservations = useCallback(async () => {
     setLoading(true);
@@ -257,12 +264,30 @@ export default function App() {
 
   function startDelete() {
     if (sessionStorage.getItem("admin_unlocked")) {
-      remove();
+      setDeleteModal(true);
       return;
     }
     setPasswordInput("");
     setPasswordError("");
-    setPasswordModal({ action: remove, label: "smazání" });
+    setPasswordModal({ action: () => setDeleteModal(true), label: "smazání" });
+  }
+
+  async function removeOne() {
+    await supabase.from("reservations").delete().eq("id", form.id);
+    setDeleteModal(false);
+    setModal(null);
+    fetchReservations();
+  }
+
+  async function removeAll() {
+    if (form.recurrence_group) {
+      await supabase.from("reservations").delete().eq("recurrence_group", form.recurrence_group);
+    } else {
+      await supabase.from("reservations").delete().eq("id", form.id);
+    }
+    setDeleteModal(false);
+    setModal(null);
+    fetchReservations();
   }
 
   async function moveReservation(id, newDate) {
@@ -295,6 +320,8 @@ export default function App() {
     setSaving(true);
     setError("");
 
+    const groupId = form.recurrence ? generateUUID() : null;
+
     const baseData = {
       date: form.date, room_id: form.room_id,
       start_time: form.start_time, end_time: form.end_time,
@@ -303,13 +330,13 @@ export default function App() {
       pomoc: !!form.pomoc,
       recurrence: form.recurrence || null,
       recurrence_end: form.recurrence_end || null,
+      recurrence_group: groupId,
     };
 
     if (modal.mode === "new") {
       const { error } = await supabase.from("reservations").insert([baseData]);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
 
-      // Generate recurring instances
       if (form.recurrence && form.recurrence_end) {
         const instances = [];
         let currentDate = form.date;
@@ -332,18 +359,14 @@ export default function App() {
         }
       }
     } else {
-      const { error } = await supabase.from("reservations").update(baseData).eq("id", form.id);
+      const { error } = await supabase.from("reservations").update({
+        ...baseData,
+        recurrence_group: form.recurrence_group || null,
+      }).eq("id", form.id);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     }
 
     setSaving(false);
-    setModal(null);
-    fetchReservations();
-  }
-
-  async function remove() {
-    if (!confirm(`Smazat rezervaci „${form.name}"?`)) return;
-    await supabase.from("reservations").delete().eq("id", form.id);
     setModal(null);
     fetchReservations();
   }
@@ -610,13 +633,39 @@ export default function App() {
                   {error && <p className="form-error">{error}</p>}
                 </div>
                 <div className="modal-footer">
-                  {modal.mode === "edit" && <button className="btn-delete" onClick={remove}>Smazat</button>}
+                  {modal.mode === "edit" && <button className="btn-delete" onClick={startDelete}>Smazat</button>}
                   <div style={{ flex: 1 }} />
                   <button className="btn-cancel" onClick={() => setModal(null)}>Zrušit</button>
                   <button className="btn-save" onClick={save} disabled={saving}>{saving ? "Ukládám..." : "Uložit"}</button>
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {deleteModal && (
+        <div className="modal-overlay" onClick={() => setDeleteModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Smazat rezervaci</h3>
+              <button className="modal-close" onClick={() => setDeleteModal(false)}>x</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: "14px", color: "var(--ink-soft)" }}>
+                {form.recurrence_group
+                  ? `„${form.name}" je opakující se rezervace. Co chceš smazat?`
+                  : `Opravdu smazat „${form.name}"?`}
+              </p>
+            </div>
+            <div className="modal-footer">
+              <div style={{ flex: 1 }} />
+              <button className="btn-cancel" onClick={() => setDeleteModal(false)}>Zrušit</button>
+              <button className="btn-delete" onClick={removeOne}>Jen tuto</button>
+              {form.recurrence_group && (
+                <button className="btn-delete" onClick={removeAll}>Všechny</button>
+              )}
+            </div>
           </div>
         </div>
       )}
