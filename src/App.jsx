@@ -12,7 +12,7 @@ const ROOMS = [
   { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
-  { id: 6, name: "TP", color: "#f97316" },
+  { id: 6, name: "TP", color: "#bf0d0d" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
@@ -322,7 +322,8 @@ export default function App() {
     setError("");
 
     const groupId = form.recurrence ? generateUUID() : null;
-
+      console.log("groupId:", groupId);
+      console.log("baseData:", { ...baseData, recurrence_group: groupId });
     const baseData = {
       date: form.date, room_id: form.room_id,
       start_time: form.start_time, end_time: form.end_time,
