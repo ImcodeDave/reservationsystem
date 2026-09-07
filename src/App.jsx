@@ -12,7 +12,8 @@ const ROOMS = [
   { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
-  { id: 6, name: "TP", color: "#bf0d0d" },
+  { id: 6, name: "TP", color: "#4d0505" },
+  { id: 7, name: "Lounge Book", color: "#84cc16" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
@@ -201,8 +202,7 @@ export default function App() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
-  const [darkMode, setDarkMode] = useState(false);
+  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });  const [darkMode, setDarkMode] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelName, setCancelName] = useState("");
   const [passwordModal, setPasswordModal] = useState(null);
@@ -305,25 +305,26 @@ export default function App() {
     link.click();
   }
 
-  async function save() {
+ async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
     if (form.start_time >= form.end_time) { setError("Konec musí být po začátku."); return; }
-
-    const conflict = reservations.find(r =>
-      r.id !== form.id &&
-      r.room_id === form.room_id &&
-      r.date === form.date &&
-      r.start_time < form.end_time &&
-      r.end_time > form.start_time
-    );
+    const LOUNGE_IDS = [1, 2];
+    const conflict = reservations.find(r => {
+      if (r.id === form.id) return false;
+      if (r.date !== form.date) return false;
+      if (r.start_time >= form.end_time || r.end_time <= form.start_time) return false;
+      if (r.room_id === form.room_id) return true;
+      const formIsLoungeBook = form.room_id === 7;
+      const rIsLoungeBook = r.room_id === 7;
+      if (formIsLoungeBook && LOUNGE_IDS.includes(r.room_id)) return true;
+      if (rIsLoungeBook && LOUNGE_IDS.includes(form.room_id)) return true;
+      return false;
+    });
     if (conflict) { setError(`Kolize s „${conflict.name}" (${conflict.start_time}–${conflict.end_time})`); return; }
-
     setSaving(true);
     setError("");
+    const groupId = form.recurrence ? generateUUID() : null;
 
-       const groupId = form.recurrence ? generateUUID() : null;
-    console.log("groupId:", groupId);
-    
     const baseData = {
       date: form.date, room_id: form.room_id,
       start_time: form.start_time, end_time: form.end_time,
