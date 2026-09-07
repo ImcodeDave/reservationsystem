@@ -12,6 +12,7 @@ const ROOMS = [
   { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
+  { id: 6, name: "TM", color: "#f97316" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
@@ -200,7 +201,7 @@ export default function App() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true });
+  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
   const [darkMode, setDarkMode] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelName, setCancelName] = useState("");
