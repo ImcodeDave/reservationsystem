@@ -438,8 +438,8 @@ export default function App() {
         <button className="btn-cancel" onClick={exportPng}>📷 Export</button>
         <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
           {darkMode ? "☀️" : "🌙"}
-      </header>
       </button>
+    </header>
          <div className="rooms-bar">
         {ROOMS.map(r => (
           <label key={r.id} className="room-pill-toggle">
