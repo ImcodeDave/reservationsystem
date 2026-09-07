@@ -500,7 +500,7 @@ export default function App() {
                       <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
                       <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
                       {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">{form.people}</span></div>}
-                      {form.pomoc && <div className="view-row"><span className="view-label">Pomoc</span><span className="view-value" style={{ color: "#e74c3c" }}>Ano</span></div>}
+                      {form.pomoc && <div className="view-row"><span className="view-label">Jarka</span><span className="view-value" style={{ color: "#e74c3c" }}>Ano</span></div>}
                     </>
                   );
                 })()}
