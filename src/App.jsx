@@ -18,11 +18,28 @@ const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
   "Červenec","Srpen","Září","Říjen","Listopad","Prosinec"];
 const DAYS = ["Po","Út","St","Čt","Pá","So","Ne"];
 
+const RECURRENCE_OPTIONS = [
+  { value: "", label: "Neopakuje se" },
+  { value: "weekly", label: "Každý týden" },
+  { value: "biweekly", label: "Každé 2 týdny" },
+  { value: "monthly", label: "Každý měsíc" },
+];
+
 function pad(n) { return String(n).padStart(2, "0"); }
 function toDateStr(y, m, d) { return `${y}-${pad(m+1)}-${pad(d)}`; }
 function todayStr() {
   const n = new Date();
   return toDateStr(n.getFullYear(), n.getMonth(), n.getDate());
+}
+function addDays(dateStr, days) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split("T")[0];
+}
+function addMonths(dateStr, months) {
+  const d = new Date(dateStr);
+  d.setMonth(d.getMonth() + months);
+  return d.toISOString().split("T")[0];
 }
 
 function getSvatek(dateStr) {
@@ -206,7 +223,7 @@ export default function App() {
   function openNew(date) {
     setError("");
     if (sessionStorage.getItem("admin_unlocked")) {
-      setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "", pomoc: false });
+      setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "", pomoc: false, recurrence: "", recurrence_end: "" });
       setModal({ mode: "new" });
       return;
     }
@@ -214,7 +231,7 @@ export default function App() {
     setPasswordError("");
     setPasswordModal({
       action: () => {
-        setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "", pomoc: false });
+        setForm({ date: date || todayStr(), room_id: 1, start_time: "09:00", end_time: "10:00", name: "", people: "", pomoc: false, recurrence: "", recurrence_end: "" });
         setModal({ mode: "new" });
       },
       label: "novou rezervaci"
@@ -223,7 +240,7 @@ export default function App() {
 
   function openEdit(res) {
     setError("");
-    setForm({ ...res });
+    setForm({ ...res, recurrence: res.recurrence || "", recurrence_end: res.recurrence_end || "" });
     setSavedForm({ ...res });
     setModal({ mode: "view" });
   }
@@ -277,25 +294,48 @@ export default function App() {
 
     setSaving(true);
     setError("");
+
+    const baseData = {
+      date: form.date, room_id: form.room_id,
+      start_time: form.start_time, end_time: form.end_time,
+      name: form.name.trim(),
+      people: form.people ? parseInt(form.people) : null,
+      pomoc: !!form.pomoc,
+      recurrence: form.recurrence || null,
+      recurrence_end: form.recurrence_end || null,
+    };
+
     if (modal.mode === "new") {
-      const { error } = await supabase.from("reservations").insert([{
-        date: form.date, room_id: form.room_id,
-        start_time: form.start_time, end_time: form.end_time,
-        name: form.name.trim(),
-        people: form.people ? parseInt(form.people) : null,
-        pomoc: !!form.pomoc,
-      }]);
+      const { error } = await supabase.from("reservations").insert([baseData]);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
+
+      // Generate recurring instances
+      if (form.recurrence && form.recurrence_end) {
+        const instances = [];
+        let currentDate = form.date;
+        const endDate = form.recurrence_end;
+
+        while (true) {
+          let nextDate;
+          if (form.recurrence === "weekly") nextDate = addDays(currentDate, 7);
+          else if (form.recurrence === "biweekly") nextDate = addDays(currentDate, 14);
+          else if (form.recurrence === "monthly") nextDate = addMonths(currentDate, 1);
+          else break;
+
+          if (nextDate > endDate) break;
+          instances.push({ ...baseData, date: nextDate });
+          currentDate = nextDate;
+        }
+
+        if (instances.length > 0) {
+          await supabase.from("reservations").insert(instances);
+        }
+      }
     } else {
-      const { error } = await supabase.from("reservations").update({
-        date: form.date, room_id: form.room_id,
-        start_time: form.start_time, end_time: form.end_time,
-        name: form.name.trim(),
-        people: form.people ? parseInt(form.people) : null,
-        pomoc: !!form.pomoc,
-      }).eq("id", form.id);
+      const { error } = await supabase.from("reservations").update(baseData).eq("id", form.id);
       if (error) { setError("Chyba při ukládání."); setSaving(false); return; }
     }
+
     setSaving(false);
     setModal(null);
     fetchReservations();
@@ -469,6 +509,7 @@ export default function App() {
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
                           <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
+                          {r.recurrence && <span style={{ fontSize: "9px", color: "#888" }}>↻</span>}
                           {r.people && <span className="event-people">👤 {r.people}</span>}
                           {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", display: "inline-block", marginLeft: 4, flexShrink: 0 }} />}
                         </div>
@@ -483,7 +524,7 @@ export default function App() {
       </main>
 
       {modal && (
-        <div className="modal-overlay" onClick={() => setModal(null)}>
+        <div className="modal-overlay" onClick={() => { if (!cancelModal) setModal(null); }}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>{modal.mode === "new" ? "Nová rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
@@ -494,6 +535,7 @@ export default function App() {
               <div className="modal-body">
                 {(() => {
                   const room = ROOMS.find(r => r.id === form.room_id);
+                  const recLabel = RECURRENCE_OPTIONS.find(o => o.value === form.recurrence)?.label;
                   return (
                     <>
                       <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
@@ -501,6 +543,7 @@ export default function App() {
                       <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
                       {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">{form.people}</span></div>}
                       {form.pomoc && <div className="view-row"><span className="view-label">Jarka</span><span className="view-value" style={{ color: "#e74c3c" }}>Ano</span></div>}
+                      {form.recurrence && <div className="view-row"><span className="view-label">Opakování</span><span className="view-value">{recLabel}{form.recurrence_end ? ` do ${form.recurrence_end}` : ""}</span></div>}
                     </>
                   );
                 })()}
@@ -545,7 +588,20 @@ export default function App() {
                     <input type="number" min="1" max="50" placeholder="Počet lidí..." value={form.people}
                       onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
                   </div>
-                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+                  <div className="field">
+                    <label>Opakování</label>
+                    <select value={form.recurrence} onChange={e => setForm(f => ({ ...f, recurrence: e.target.value }))}>
+                      {RECURRENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                  </div>
+                  {form.recurrence && (
+                    <div className="field">
+                      <label>Opakovat do</label>
+                      <input type="date" value={form.recurrence_end}
+                        onChange={e => setForm(f => ({ ...f, recurrence_end: e.target.value }))} />
+                    </div>
+                  )}
+                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
                     <input type="checkbox" id="pomoc" checked={!!form.pomoc}
                       onChange={e => setForm(f => ({ ...f, pomoc: e.target.checked }))}
                       style={{ width: "18px", height: "18px", cursor: "pointer", flexShrink: 0 }} />
