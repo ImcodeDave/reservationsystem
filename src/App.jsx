@@ -545,10 +545,10 @@ export default function App() {
                     <input type="number" min="1" max="50" placeholder="Počet lidí..." value={form.people}
                       onChange={e => setForm(f => ({ ...f, people: e.target.value }))} />
                   </div>
-                  <div className="field" style={{ flexDirection: "row", alignItems: "center", gap: "10px" }}>
+                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
                     <input type="checkbox" id="pomoc" checked={!!form.pomoc}
                       onChange={e => setForm(f => ({ ...f, pomoc: e.target.checked }))}
-                      style={{ width: "18px", height: "18px", cursor: "pointer" }} />
+                      style={{ width: "18px", height: "18px", cursor: "pointer", flexShrink: 0 }} />
                     <label htmlFor="pomoc" style={{ textTransform: "none", fontSize: "14px", letterSpacing: 0, cursor: "pointer" }}>Pomoc</label>
                   </div>
                   {error && <p className="form-error">{error}</p>}
