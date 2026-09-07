@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 const ADMIN_PASSWORD = "202626";
 const ROOMS = [
-  { id: 1, name: "Lounge Book", color: "#84cc16" },
+  { id: 1, name: "LOUNGE", color: "#fa0a0a" },
   { id: 2, name: "ALL STARS (lounge)", color: "#6366f1" },
   { id: 3, name: "CENTRE COURT (lounge)", color: "#22c55e" },
   { id: 4, name: "ICEDEN (2np)", color: "#f59e0b" },
