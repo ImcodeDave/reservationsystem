@@ -439,22 +439,20 @@ export default function App() {
         <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
           {darkMode ? "☀️" : "🌙"}
         </button>
+         <div className="rooms-bar">
+        {ROOMS.map(r => (
+          <label key={r.id} className="room-pill-toggle">
+            <input type="checkbox" checked={visibleRooms[r.id]}
+              onChange={() => setVisibleRooms(v => ({ ...v, [r.id]: !v[r.id] }))} />
+            <span className="room-dot" style={{ background: r.color }} />
+            <span className="room-name">{r.name}</span>
+          </label>
+        ))}
+      </div>
       </header>
 
       <main className="main">
         <div className="sidebar">
-          <div className="sidebar-section">
-            <p className="sidebar-label">Místnosti</p>
-            {ROOMS.map(r => (
-              <label key={r.id} className="room-toggle">
-                <input type="checkbox" checked={visibleRooms[r.id]}
-                  onChange={() => setVisibleRooms(v => ({ ...v, [r.id]: !v[r.id] }))} />
-                <span className="room-dot" style={{ background: r.color }} />
-                <span className="room-name">{r.name}</span>
-              </label>
-            ))}
-          </div>
-
           <div className="sidebar-section">
             <p className="sidebar-label">Tento měsíc</p>
             <p className="sidebar-stat">{reservations.length} rezervací</p>
