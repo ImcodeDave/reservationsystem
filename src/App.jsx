@@ -321,9 +321,9 @@ export default function App() {
     setSaving(true);
     setError("");
 
-    const groupId = form.recurrence ? generateUUID() : null;
-      console.log("groupId:", groupId);
-      console.log("baseData:", { ...baseData, recurrence_group: groupId });
+       const groupId = form.recurrence ? generateUUID() : null;
+    console.log("groupId:", groupId);
+    
     const baseData = {
       date: form.date, room_id: form.room_id,
       start_time: form.start_time, end_time: form.end_time,
