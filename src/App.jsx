@@ -7,13 +7,13 @@ const supabase = createClient(
 );
 const ADMIN_PASSWORD = "202626";
 const ROOMS = [
-  { id: 1, name: "LOUNGE", color: "#fa0a0a" },
-  { id: 2, name: "ALL STARS (lounge)", color: "#6366f1" },
-  { id: 3, name: "CENTRE COURT (lounge)", color: "#22c55e" },
-  { id: 4, name: "ICEDEN (2np)", color: "#f59e0b" },
-  { id: 5, name: "JS", color: "#ec4899" },
-  { id: 6, name: "MB", color: "#06b6d4" },
-  { id: 7, name: "TP", color: "#4d0505" },
+  { id: 7, name: "LOUNGE", color: "#fa0a0a" },
+  { id: 1, name: "ALL STARS (lounge)", color: "#6366f1" },
+  { id: 2, name: "CENTRE COURT (lounge)", color: "#22c55e" },
+  { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
+  { id: 4, name: "JS", color: "#ec4899" },
+  { id: 5, name: "MB", color: "#06b6d4" },
+  { id: 6, name: "TP", color: "#4d0505" },
   
 ];
 
