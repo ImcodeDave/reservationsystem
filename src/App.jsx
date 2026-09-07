@@ -12,7 +12,7 @@ const ROOMS = [
   { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
-  { id: 6, name: "TM", color: "#f97316" },
+  { id: 6, name: "TP", color: "#f97316" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
