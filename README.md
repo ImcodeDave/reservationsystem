@@ -97,3 +97,5 @@ const ROOMS = [
 - **Vite** — build tool
 - **Supabase** — databáze (PostgreSQL) + realtime API
 - **Vercel** — hosting (zdarma)
+
+Read me generováno ai :). 
