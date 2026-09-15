@@ -14,7 +14,6 @@ const ROOMS = [
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
   { id: 6, name: "TP", color: "#4d0505" },
-  
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
@@ -203,7 +202,8 @@ export default function App() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });  const [darkMode, setDarkMode] = useState(false);
+  const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });
+  const [darkMode, setDarkMode] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelName, setCancelName] = useState("");
   const [passwordModal, setPasswordModal] = useState(null);
@@ -211,6 +211,7 @@ export default function App() {
   const [passwordError, setPasswordError] = useState("");
   const [savedForm, setSavedForm] = useState({});
   const [deleteModal, setDeleteModal] = useState(false);
+  const [dayModal, setDayModal] = useState(null);
 
   const fetchReservations = useCallback(async () => {
     setLoading(true);
@@ -306,7 +307,7 @@ export default function App() {
     link.click();
   }
 
- async function save() {
+  async function save() {
     if (!form.name?.trim()) { setError("Zadej jméno nebo název akce."); return; }
     if (form.start_time >= form.end_time) { setError("Konec musí být po začátku."); return; }
     const LOUNGE_IDS = [1, 2];
@@ -438,9 +439,10 @@ export default function App() {
         <button className="btn-cancel" onClick={exportPng}>📷 Export</button>
         <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
           {darkMode ? "☀️" : "🌙"}
-      </button>
-    </header>
-         <div className="rooms-bar">
+        </button>
+      </header>
+
+      <div className="rooms-bar">
         {ROOMS.map(r => (
           <label key={r.id} className="room-pill-toggle">
             <input type="checkbox" checked={visibleRooms[r.id]}
@@ -450,6 +452,7 @@ export default function App() {
           </label>
         ))}
       </div>
+
       <main className="main">
         <div className="sidebar">
           <div className="sidebar-section">
@@ -523,7 +526,7 @@ export default function App() {
                     onDragOver={e => e.preventDefault()}
                     onDrop={e => { e.preventDefault(); const id = parseInt(e.dataTransfer.getData("id")); moveReservation(id, dateStr); }}>
                     <div className={`day-num${isToday ? " today-num" : ""}`}>{d}</div>
-                    {dayRes.map(r => {
+                    {dayRes.slice(0, 3).map(r => {
                       const room = ROOMS.find(x => x.id === r.room_id);
                       return (
                         <div key={r.id} className="event"
@@ -539,6 +542,12 @@ export default function App() {
                         </div>
                       );
                     })}
+                    {dayRes.length > 3 && (
+                      <div className="event-more"
+                        onClick={e => { e.stopPropagation(); setDayModal({ date: dateStr, reservations: dayRes }); }}>
+                        + {dayRes.length - 3} další
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -546,6 +555,36 @@ export default function App() {
           </div>
         </div>
       </main>
+
+      {dayModal && (
+        <div className="modal-overlay" onClick={() => setDayModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{dayModal.date.split("-").reverse().join(". ")}</h3>
+              <button className="modal-close" onClick={() => setDayModal(null)}>x</button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: "60vh", overflowY: "auto" }}>
+              {dayModal.reservations.map(r => {
+                const room = ROOMS.find(x => x.id === r.room_id);
+                return (
+                  <div key={r.id} className="day-modal-item"
+                    onClick={() => { setDayModal(null); openEdit(r); }}>
+                    <span className="day-modal-dot" style={{ background: room?.color }} />
+                    <div className="day-modal-info">
+                      <span className="day-modal-name">{r.name}</span>
+                      <span className="day-modal-meta">
+                        {r.start_time.slice(0,5)}–{r.end_time.slice(0,5)} · {room?.name}
+                        {r.people ? ` · 👤 ${r.people}` : ""}
+                      </span>
+                    </div>
+                    {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", flexShrink: 0 }} />}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {modal && (
         <div className="modal-overlay" onClick={() => { if (!cancelModal) setModal(null); }}>
