@@ -386,6 +386,13 @@ body {
   font-size: 12px;
   color: var(--ink-mute);
 }
+.day-modal-event {
+  padding: 8px 10px;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+.day-modal-event .event-time { font-size: 12px; }
+.day-modal-event .event-name { font-size: 13px; }
 
 /* ─── Buttons ─────────────────────────────────────── */
 
