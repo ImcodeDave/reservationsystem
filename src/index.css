@@ -36,7 +36,7 @@ body {
   gap: 8px;
   padding: 10px 1.5rem;
   border-bottom: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--paper);
   flex-wrap: wrap;
   flex-shrink: 0;
   justify-content: center;
@@ -57,7 +57,7 @@ body {
 }
 
 .room-pill-toggle:has(input:checked) {
-  background: var(--bg-2);
+  background: var(--paper-2);
   color: var(--ink);
   border-color: var(--line-strong);
 }
@@ -336,6 +336,57 @@ body {
   color: var(--ink);
 }
 
+.event-more {
+  font-size: 10px;
+  color: var(--ink-mute);
+  padding: 3px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.1s;
+  font-weight: 500;
+}
+.event-more:hover { background: var(--paper-2); color: var(--ink); }
+
+/* ─── Day modal ───────────────────────────────────── */
+
+.day-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.day-modal-item:hover { opacity: 0.7; }
+.day-modal-item:last-child { border-bottom: none; }
+
+.day-modal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.day-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.day-modal-name {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.day-modal-meta {
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
 /* ─── Buttons ─────────────────────────────────────── */
 
 .btn-add {
@@ -390,7 +441,7 @@ body {
 .modal-header {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   padding: 1.25rem 1.5rem 0;
 }
 
@@ -535,6 +586,7 @@ body {
 }
 .dark .sidebar { background: var(--paper); border-color: var(--line); }
 .dark .app-header { background: var(--paper); border-color: var(--line); }
+.dark .rooms-bar { background: var(--paper); border-color: var(--line); }
 
 .dark .cal-grid-wrap { background: #1a1a1a; }
 .dark .modal { background: #1e1e1e; }
@@ -559,6 +611,13 @@ body {
   }
 
   .app-title { font-size: 15px; }
+
+  .rooms-bar {
+    padding: 8px 1rem;
+    gap: 6px;
+  }
+
+  .room-pill-toggle { font-size: 11px; padding: 4px 10px; }
 
   .main {
     flex-direction: column;
