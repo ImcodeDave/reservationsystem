@@ -563,21 +563,18 @@ export default function App() {
               <h3>{dayModal.date.split("-").reverse().join(". ")}</h3>
               <button className="modal-close" onClick={() => setDayModal(null)}>x</button>
             </div>
-            <div className="modal-body" style={{ maxHeight: "60vh", overflowY: "auto" }}>
+                        <div className="modal-body" style={{ maxHeight: "60vh", overflowY: "auto", gap: "6px" }}>
               {dayModal.reservations.map(r => {
                 const room = ROOMS.find(x => x.id === r.room_id);
                 return (
-                  <div key={r.id} className="day-modal-item"
+                  <div key={r.id} className="event day-modal-event"
+                    style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                     onClick={() => { setDayModal(null); openEdit(r); }}>
-                    <span className="day-modal-dot" style={{ background: room?.color }} />
-                    <div className="day-modal-info">
-                      <span className="day-modal-name">{r.name}</span>
-                      <span className="day-modal-meta">
-                        {r.start_time.slice(0,5)}–{r.end_time.slice(0,5)} · {room?.name}
-                        {r.people ? ` · 👤 ${r.people}` : ""}
-                      </span>
-                    </div>
-                    {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", flexShrink: 0 }} />}
+                    <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
+                    <span className="event-name">{r.name}</span>
+                    {r.recurrence && <span style={{ fontSize: "9px", color: "#888" }}>↻</span>}
+                    {r.people && <span className="event-people">👤 {r.people}</span>}
+                    {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", display: "inline-block", marginLeft: 4, flexShrink: 0 }} />}
                   </div>
                 );
               })}
