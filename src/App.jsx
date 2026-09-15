@@ -393,7 +393,7 @@ export default function App() {
     setCancelModal(false);
     setCancelName("");
     setModal(null);
-    alert("Zadost o zruseni byla odeslana.");
+    alert("Žádost o zrušení byla odeslána.");
   }
 
   function checkPassword() {
