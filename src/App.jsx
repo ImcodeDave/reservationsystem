@@ -5,6 +5,9 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
+const CHRISTMAS_RESERVATION_ID = "268";
+const isChristmasReservation = (reservation) => String(reservation?.id) === CHRISTMAS_RESERVATION_ID;
+
 const ADMIN_PASSWORD = "202626";
 const ROOMS = [
   { id: 7, name: "LOUNGE", color: "#fa0a0a" },
@@ -475,7 +478,7 @@ export default function App() {
               .map(r => {
                 const room = ROOMS.find(x => x.id === r.room_id);
                 return (
-                  <div key={r.id} className="upcoming-item" onClick={() => openEdit(r)}>
+                  <div key={r.id} className={`upcoming-item${isChristmasReservation(r) ? " upcoming-item--christmas" : ""}`} onClick={() => openEdit(r)}>
                     <span className="upcoming-dot" style={{ background: room?.color }} />
                     <div className="upcoming-info">
                       <span className="upcoming-name">{r.name}</span>
@@ -529,8 +532,8 @@ export default function App() {
                     {dayRes.slice(0, 3).map(r => {
                       const room = ROOMS.find(x => x.id === r.room_id);
                       return (
-                        <div key={r.id} className="event"
-                          style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
+                        <div key={r.id} className={`event${isChristmasReservation(r) ? " event--christmas" : ""}`}
+                          style={isChristmasReservation(r) ? undefined : { background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                           draggable
                           onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData("id", r.id); }}
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
@@ -567,8 +570,8 @@ export default function App() {
               {dayModal.reservations.map(r => {
                 const room = ROOMS.find(x => x.id === r.room_id);
                 return (
-                  <div key={r.id} className="event day-modal-event"
-                    style={{ background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
+                  <div key={r.id} className={`event day-modal-event${isChristmasReservation(r) ? " event--christmas" : ""}`}
+                    style={isChristmasReservation(r) ? undefined : { background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
                     onClick={() => { setDayModal(null); openEdit(r); }}>
                     <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                     <span className="event-name">{r.name}</span>
@@ -585,7 +588,7 @@ export default function App() {
 
       {modal && (
         <div className="modal-overlay" onClick={() => { if (!cancelModal) setModal(null); }}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className={`modal${modal.mode === "view" && isChristmasReservation(form) ? " modal--christmas" : ""}`} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>{modal.mode === "new" ? "Nová rezervace" : modal.mode === "edit" ? "Upravit rezervaci" : form.name}</h3>
               <button className="modal-close" onClick={() => setModal(null)}>x</button>
@@ -593,6 +596,15 @@ export default function App() {
 
             {modal.mode === "view" ? (
               <div className="modal-body">
+                {isChristmasReservation(form) && (
+                  <div className="christmas-welcome">
+                    <div className="christmas-ornaments" aria-hidden="true"><span /><span /><span /></div>
+                    <span className="christmas-eyebrow">PERINVEST · SPOLEČNĚ U JEDNOHO STOLU</span>
+                    <span className="christmas-symbol" aria-hidden="true">✧</span>
+                    <p>Čas na vánoční pohodu</p>
+                    <span>Potkáme se v Lounge.</span>
+                  </div>
+                )}
                 {(() => {
                   const room = ROOMS.find(r => r.id === form.room_id);
                   const recLabel = RECURRENCE_OPTIONS.find(o => o.value === form.recurrence)?.label;

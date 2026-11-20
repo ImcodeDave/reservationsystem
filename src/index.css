@@ -734,3 +734,46 @@ body {
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+
+.event.event--christmas {
+  background: linear-gradient(115deg, #173c32, #245344);
+  border-left: 2px solid #d9bb79;
+  color: #fff7e5;
+  box-shadow: inset 0 0 0 1px #d9bb7926;
+}
+.event.event--christmas .event-name,
+.event.event--christmas .event-time { color: #fff7e5; opacity: 1; }
+.event--christmas .event-name::before { content: "✧ "; color: #e7ca8c; }
+.upcoming-item--christmas { padding: 10px; border-radius: 6px; background: #173c32; }
+.upcoming-item--christmas .upcoming-name { color: #fff7e5; }
+.upcoming-item--christmas .upcoming-time { color: #e7ca8c; }
+.upcoming-item--christmas .upcoming-dot { background: #e7ca8c !important; }
+.modal.modal--christmas {
+  --ink: #fff7e5;
+  --ink-mute: #c6d4c8;
+  --line: #d9bb7933;
+  background: radial-gradient(ellipse at top right, #42614c80, transparent 65%), #153b31;
+  color: var(--ink);
+  border: 1px solid #d9bb7966;
+  overflow: hidden;
+}
+.modal--christmas .modal-header { position: relative; z-index: 1; }
+.modal--christmas .modal-header h3 { font-size: 25px; color: #f3db9f; }
+.modal--christmas .modal-close { color: #fff7e5; }
+.christmas-welcome { text-align: center; position: relative; padding: 32px 0 25px; }
+.christmas-eyebrow { display: block; font-size: 9px; letter-spacing: .17em; color: #e4cb94; position: relative; }
+.christmas-symbol { display: block; color: #f3db9f; font-size: 50px; line-height: 1; margin: 20px 0 10px; }
+.christmas-welcome p { font-family: 'DM Serif Display', serif; font-size: 25px; line-height: 1.2; margin: 0 0 10px; color: #fff7e5; }
+.christmas-welcome > span:last-child { font-size: 12px; color: #c6d4c8; }
+.christmas-ornaments { position: absolute; inset: -65px 0 auto; height: 115px; pointer-events: none; }
+.christmas-ornaments span { position: absolute; width: 26px; height: 30px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #efdbab, #b48b4b 75%); right: 15px; top: 10px; box-shadow: 0 8px 20px #071d2450; opacity: .65; }
+.christmas-ornaments span::before { content: ""; position: absolute; bottom: 100%; left: 50%; width: 1px; height: 70px; background: #d9bb79; }
+.christmas-ornaments span:nth-child(2) { right: 52px; top: 40px; width: 18px; height: 21px; }
+.christmas-ornaments span:nth-child(3) { left: 8px; top: 32px; width: 20px; height: 23px; }
+.modal--christmas .modal-footer { flex-wrap: wrap; gap: 8px; }
+.modal--christmas .btn-cancel { color: #fff7e5; border-color: #d9bb7966; }
+.modal--christmas .btn-save { background: #ead09a; color: #173c32; border: 1px solid #ead09a; }
+.modal--christmas .btn-request { color: #f0c7bd; border-color: #f0c7bd66; }
+.modal--christmas button:focus-visible { outline: 2px solid #f3db9f; outline-offset: 3px; }
+.christmas-ornaments span:nth-child(3) { top: -5px; }
+.modal--christmas .btn-request { flex-basis: 100%; }
