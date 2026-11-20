@@ -10,13 +10,13 @@ const isChristmasReservation = (reservation) => String(reservation?.id) === CHRI
 
 const ADMIN_PASSWORD = "202626";
 const ROOMS = [
-  { id: 7, name: "LOUNGE", color: "#fa0a0a" },
-  { id: 1, name: "ALL STARS (lounge)", color: "#6366f1" },
+  { id: 7, name: "LOUNGE", color: "#fa0a0a", darkColor: "#ff8585" },
+  { id: 1, name: "ALL STARS (lounge)", color: "#6366f1", darkColor: "#a5a8ff" },
   { id: 2, name: "CENTRE COURT (lounge)", color: "#22c55e" },
   { id: 3, name: "ICEDEN (2np)", color: "#f59e0b" },
   { id: 4, name: "JS", color: "#ec4899" },
   { id: 5, name: "MB", color: "#06b6d4" },
-  { id: 6, name: "TP", color: "#4d0505" },
+  { id: 6, name: "TP", color: "#4d0505", darkColor: "#d99292" },
 ];
 
 const MONTHS = ["Leden","Únor","Březen","Duben","Květen","Červen",
@@ -29,6 +29,10 @@ const RECURRENCE_OPTIONS = [
   { value: "biweekly", label: "Každé 2 týdny" },
   { value: "monthly", label: "Každý měsíc" },
 ];
+
+function roomColor(room, darkMode) {
+  return (darkMode ? room?.darkColor : null) || room?.color || "#808080";
+}
 
 function pad(n) { return String(n).padStart(2, "0"); }
 function toDateStr(y, m, d) { return `${y}-${pad(m+1)}-${pad(d)}`; }
@@ -206,7 +210,16 @@ export default function App() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [visibleRooms, setVisibleRooms] = useState({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    try { return localStorage.getItem("perinvest-theme") === "dark"; }
+    catch { return false; }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = darkMode ? "dark" : "light";
+    try { localStorage.setItem("perinvest-theme", darkMode ? "dark" : "light"); }
+    catch {}
+  }, [darkMode]);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelName, setCancelName] = useState("");
   const [passwordModal, setPasswordModal] = useState(null);
@@ -440,7 +453,7 @@ export default function App() {
           <span>+</span> Nová rezervace
         </button>
         <button className="btn-cancel" onClick={exportPng}>📷 Export</button>
-        <button className="btn-cancel" onClick={() => setDarkMode(d => !d)}>
+        <button className="btn-cancel" aria-label={darkMode ? "Zapnout světlý režim" : "Zapnout tmavý režim"} aria-pressed={darkMode} onClick={() => setDarkMode(d => !d)}>
           {darkMode ? "☀️" : "🌙"}
         </button>
       </header>
@@ -450,7 +463,7 @@ export default function App() {
           <label key={r.id} className="room-pill-toggle">
             <input type="checkbox" checked={visibleRooms[r.id]}
               onChange={() => setVisibleRooms(v => ({ ...v, [r.id]: !v[r.id] }))} />
-            <span className="room-dot" style={{ background: r.color }} />
+            <span className="room-dot" style={{ background: roomColor(r, darkMode) }} />
             <span className="room-name">{r.name}</span>
           </label>
         ))}
@@ -479,7 +492,7 @@ export default function App() {
                 const room = ROOMS.find(x => x.id === r.room_id);
                 return (
                   <div key={r.id} className={`upcoming-item${isChristmasReservation(r) ? " upcoming-item--christmas" : ""}`} onClick={() => openEdit(r)}>
-                    <span className="upcoming-dot" style={{ background: room?.color }} />
+                    <span className="upcoming-dot" style={{ background: roomColor(room, darkMode) }} />
                     <div className="upcoming-info">
                       <span className="upcoming-name">{r.name}</span>
                       <span className="upcoming-time">{r.date === today ? "Dnes" : r.date.slice(5).replace("-", ".")} · {r.start_time.slice(0,5)}</span>
@@ -533,15 +546,15 @@ export default function App() {
                       const room = ROOMS.find(x => x.id === r.room_id);
                       return (
                         <div key={r.id} className={`event${isChristmasReservation(r) ? " event--christmas" : ""}`}
-                          style={isChristmasReservation(r) ? undefined : { background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
+                          style={isChristmasReservation(r) ? undefined : { "--event-bg": `${roomColor(room, darkMode)}${darkMode ? "22" : "12"}`, "--room-color": roomColor(room, darkMode) }}
                           draggable
                           onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData("id", r.id); }}
                           onClick={e => { e.stopPropagation(); openEdit(r); }}>
                           <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                           <span className="event-name">{r.name}</span>
-                          {r.recurrence && <span style={{ fontSize: "9px", color: "#888" }}>↻</span>}
+                          {r.recurrence && <span className="event-recurrence">↻</span>}
                           {r.people && <span className="event-people">👤 {r.people}</span>}
-                          {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", display: "inline-block", marginLeft: 4, flexShrink: 0 }} />}
+                          {r.pomoc && <span className="assistance-dot" />}
                         </div>
                       );
                     })}
@@ -571,13 +584,13 @@ export default function App() {
                 const room = ROOMS.find(x => x.id === r.room_id);
                 return (
                   <div key={r.id} className={`event day-modal-event${isChristmasReservation(r) ? " event--christmas" : ""}`}
-                    style={isChristmasReservation(r) ? undefined : { background: room?.color + "12", borderLeft: `2px solid ${room?.color}` }}
+                    style={isChristmasReservation(r) ? undefined : { "--event-bg": `${roomColor(room, darkMode)}${darkMode ? "22" : "12"}`, "--room-color": roomColor(room, darkMode) }}
                     onClick={() => { setDayModal(null); openEdit(r); }}>
                     <span className="event-time">{r.start_time.slice(0,5)}–{r.end_time.slice(0,5)}</span>
                     <span className="event-name">{r.name}</span>
-                    {r.recurrence && <span style={{ fontSize: "9px", color: "#888" }}>↻</span>}
+                    {r.recurrence && <span className="event-recurrence">↻</span>}
                     {r.people && <span className="event-people">👤 {r.people}</span>}
-                    {r.pomoc && <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e74c3c", display: "inline-block", marginLeft: 4, flexShrink: 0 }} />}
+                    {r.pomoc && <span className="assistance-dot" />}
                   </div>
                 );
               })}
@@ -599,7 +612,7 @@ export default function App() {
                 {isChristmasReservation(form) && (
                   <div className="christmas-welcome">
                     <div className="christmas-ornaments" aria-hidden="true"><span /><span /><span /></div>
-                    <span className="christmas-eyebrow">PERINVEST · SPOLEČNĚ U JEDNOHO STOLU</span>
+                    <span className="christmas-eyebrow">PERINVEST · Společně pod košem</span>
                     <span className="christmas-symbol" aria-hidden="true">✧</span>
                     <p>Čas na vánoční pohodu</p>
                     <span>Potkáme se v Lounge.</span>
@@ -610,11 +623,11 @@ export default function App() {
                   const recLabel = RECURRENCE_OPTIONS.find(o => o.value === form.recurrence)?.label;
                   return (
                     <>
-                      <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span style={{ background: room?.color, display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
+                      <div className="view-row"><span className="view-label">Místnost</span><span className="view-value"><span style={{ background: roomColor(room, darkMode), display: "inline-block", width: 8, height: 8, borderRadius: "50%", marginRight: 6 }} />{room?.name}</span></div>
                       <div className="view-row"><span className="view-label">Datum</span><span className="view-value">{form.date}</span></div>
                       <div className="view-row"><span className="view-label">Čas</span><span className="view-value">{form.start_time?.slice(0,5)}-{form.end_time?.slice(0,5)}</span></div>
                       {form.people && <div className="view-row"><span className="view-label">Počet osob</span><span className="view-value">{form.people}</span></div>}
-                      {form.pomoc && <div className="view-row"><span className="view-label">Jarka</span><span className="view-value" style={{ color: "#e74c3c" }}>Ano</span></div>}
+                      {form.pomoc && <div className="view-row"><span className="view-label">Jarka</span><span className="view-value assistance-value">Ano</span></div>}
                       {form.recurrence && <div className="view-row"><span className="view-label">Opakování</span><span className="view-value">{recLabel}{form.recurrence_end ? ` do ${form.recurrence_end}` : ""}</span></div>}
                     </>
                   );

@@ -5,13 +5,28 @@
 :root {
   --ink: #0f0f0f;
   --ink-soft: #555;
-  --ink-mute: #aaa;
+  --ink-mute: #686d76;
   --paper: #fafaf8;
   --paper-2: #eef2f8;
   --paper-3: #eceae5;
   --line: rgba(0,0,0,0.08);
   --line-strong: rgba(0,0,0,0.15);
   --accent: #0f0f0f;
+  --on-accent: #fff;
+  --surface: #fff;
+  --field: #fff;
+  --weekend: #f4f3ef;
+  --today: #fffdf5;
+  --today-mark: #0f0f0f;
+  --on-today: #fff;
+  --full: #fff8f0;
+  --warning: #a44b0b;
+  --danger: #b12b24;
+  --danger-bg: #fdf0ef;
+  --danger-line: #b12b244d;
+  --overlay: rgba(15,15,15,0.35);
+  --loading: rgba(255,255,255,0.85);
+  --focus: #426cb1;
   --radius: 6px;
   --shadow: 0 2px 16px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
   --shadow-lg: 0 8px 48px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.08);
@@ -29,7 +44,7 @@ body {
 
 /* ─── Layout ──────────────────────────────────────── */
 
-.app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.app { color-scheme: light; color: var(--ink); background: var(--paper); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 .rooms-bar {
   display: flex;
   align-items: center;
@@ -63,7 +78,11 @@ body {
 }
 
 .room-pill-toggle input {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
 }
 
 .app-header {
@@ -77,11 +96,11 @@ body {
   flex-shrink: 0;
 }
 .cal-cell.full {
-  background: #fff8f0;
+  background: var(--full);
 }
 
 .cal-cell.full .day-num {
-  color: #e67e22;
+  color: var(--warning);
   font-weight: 600;
 }
 .header-left { display: flex; align-items: center; gap: 10px; }
@@ -226,7 +245,7 @@ body {
   position: relative;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .cal-loading {
@@ -237,7 +256,7 @@ body {
   justify-content: center;
   font-size: 13px;
   color: var(--ink-mute);
-  background: rgba(255,255,255,0.7);
+  background: var(--loading);
   z-index: 10;
   border-radius: 10px;
 }
@@ -279,10 +298,11 @@ body {
 .cal-cell:nth-child(7n) { border-right: none; }
 .cal-cell:hover { background: var(--paper-2); }
 .cal-cell.empty { background: var(--paper); cursor: default; }
-.cal-cell.weekend { background: #f4f3ef; }
-.dark .cal-cell.weekend { background: #1c1c1c; }
+.cal-cell.weekend { background: var(--weekend); }
 .cal-cell.empty:hover { background: var(--paper); }
-.cal-cell.today { background: #fffdf5; }
+.cal-cell.today { background: var(--today); }
+.cal-cell.full { background: var(--full); }
+.cal-cell:not(.empty):hover { background: var(--paper-2); }
 
 .day-num {
   font-size: 12px;
@@ -299,14 +319,17 @@ body {
 }
 
 .today-num {
-  background: var(--ink);
-  color: #fff;
+  background: var(--today-mark);
+  color: var(--on-today);
   font-weight: 500;
 }
 
 /* ─── Events ──────────────────────────────────────── */
 
 .event {
+  background: var(--event-bg);
+  border-left: 2px solid var(--room-color);
+  color: var(--ink);
   border-radius: 3px;
   padding: 3px 6px;
   margin-bottom: 2px;
@@ -400,8 +423,8 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--ink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   border: none;
   border-radius: var(--radius);
   padding: 8px 16px;
@@ -420,7 +443,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15,15,15,0.35);
+  background: var(--overlay);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -432,7 +455,7 @@ body {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal {
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   width: 380px;
   max-width: calc(100vw - 2rem);
@@ -499,7 +522,7 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   color: var(--ink);
-  background: #fff;
+  background: var(--field);
   outline: none;
   transition: border-color 0.1s;
   appearance: none;
@@ -513,8 +536,8 @@ body {
 
 .form-error {
   font-size: 12px;
-  color: #c0392b;
-  background: #fdf0ef;
+  color: var(--danger);
+  background: var(--danger-bg);
   border-radius: var(--radius);
   padding: 8px 10px;
 }
@@ -543,8 +566,8 @@ body {
 .btn-cancel:hover { background: var(--paper-2); color: var(--ink); }
 
 .btn-save {
-  background: var(--ink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   border: none;
   border-radius: var(--radius);
   padding: 8px 20px;
@@ -560,51 +583,45 @@ body {
 .btn-delete {
   background: none;
   border: none;
-  color: #c0392b;
+  color: var(--danger);
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   cursor: pointer;
   padding: 8px 0;
-  opacity: 0.7;
+  opacity: 1;
 }
 .btn-delete:hover { opacity: 1; }
-/* ─── Dnešek ──────────────────────────────────────── */
-.dark .cal-cell.today {
-  background: #2a2400;
-  border-left: 2px solid #f0c040;
+:root[data-theme="dark"], .app.dark {
+  color-scheme: dark;
+  --ink: #edf1f7;
+  --ink-soft: #c1cad7;
+  --ink-mute: #a5b0bf;
+  --paper: #141820;
+  --paper-2: #2b3544;
+  --paper-3: #354154;
+  --surface: #1c222d;
+  --field: #252e3b;
+  --weekend: #202733;
+  --today: #2d2b21;
+  --today-mark: #eed18b;
+  --on-today: #22251e;
+  --full: #33271f;
+  --warning: #f3b278;
+  --accent: #e5ebf4;
+  --on-accent: #18202b;
+  --line: rgba(217,229,247,0.12);
+  --line-strong: rgba(217,229,247,0.26);
+  --danger: #ffaaa3;
+  --danger-bg: #3b252b;
+  --danger-line: #ffaaa35c;
+  --overlay: rgba(3,7,13,0.72);
+  --loading: rgba(20,24,32,0.9);
+  --focus: #9ec4ff;
+  --shadow: 0 2px 16px #0004;
+  --shadow-lg: 0 20px 60px #0008;
 }
+.app.dark .header-left img { filter: brightness(0) invert(.92); }
 
-/* ─── Dark mode ───────────────────────────────────── */
-.dark {
-  --ink: #f0f0f0;
-  --ink-soft: #aaa;
-  --ink-mute: #666;
-  --paper: #141414;
-  --paper-2: #1e1e1e;
-  --paper-3: #2a2a2a;
-  --line: rgba(255,255,255,0.08);
-  --line-strong: rgba(255,255,255,0.15);
-}
-.dark .event-name { color: var(--ink); }
-.dark .event-time { color: var(--ink); }
-.dark .btn-add {
-  background: #f0f0f0;
-  color: #1a1a1a;
-}
-.dark .sidebar { background: var(--paper); border-color: var(--line); }
-.dark .app-header { background: var(--paper); border-color: var(--line); }
-.dark .rooms-bar { background: var(--paper); border-color: var(--line); }
-
-.dark .cal-grid-wrap { background: #1a1a1a; }
-.dark .modal { background: #1e1e1e; }
-.dark .field input,
-.dark .field select { background: #2a2a2a; color: #f0f0f0; }
-.dark .cal-cell.today { background: #2a2400; border-left: 2px solid #f0c040; }
-.dark .cal-cell.full { background: #2a1a00; }
-.dark .today-num {
-  background: #f0c040;
-  color: #1a1a1a;
-}
 .sidebar-greeting {
   font-size: 13px;
   color: var(--ink-soft);
@@ -719,16 +736,16 @@ body {
 }
 .btn-request {
   background: none;
-  border: 1px solid rgba(192,57,43,0.3);
+  border: 1px solid var(--danger-line);
   border-radius: var(--radius);
   padding: 8px 14px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: #c0392b;
+  color: var(--danger);
   cursor: pointer;
   transition: all 0.1s;
 }
-.btn-request:hover { background: rgba(192,57,43,0.08); }
+.btn-request:hover { background: var(--danger-bg); }
 
 /* ─── Scrollbar ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -736,7 +753,7 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
 
 .event.event--christmas {
-  background: linear-gradient(115deg, #173c32, #245344);
+  background: linear-gradient(115deg, #173c32, #245344), #173c32;
   border-left: 2px solid #d9bb79;
   color: #fff7e5;
   box-shadow: inset 0 0 0 1px #d9bb7926;
@@ -770,10 +787,32 @@ body {
 .christmas-ornaments span::before { content: ""; position: absolute; bottom: 100%; left: 50%; width: 1px; height: 70px; background: #d9bb79; }
 .christmas-ornaments span:nth-child(2) { right: 52px; top: 40px; width: 18px; height: 21px; }
 .christmas-ornaments span:nth-child(3) { left: 8px; top: 32px; width: 20px; height: 23px; }
-.modal--christmas .modal-footer { flex-wrap: wrap; gap: 8px; }
+.modal--christmas .modal-footer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.modal--christmas .modal-footer > div { display: none; }
 .modal--christmas .btn-cancel { color: #fff7e5; border-color: #d9bb7966; }
 .modal--christmas .btn-save { background: #ead09a; color: #173c32; border: 1px solid #ead09a; }
 .modal--christmas .btn-request { color: #f0c7bd; border-color: #f0c7bd66; }
 .modal--christmas button:focus-visible { outline: 2px solid #f3db9f; outline-offset: 3px; }
 .christmas-ornaments span:nth-child(3) { top: -5px; }
-.modal--christmas .btn-request { flex-basis: 100%; }
+.modal--christmas .btn-request { grid-column: 1 / -1; }
+
+.field input::placeholder { color: var(--ink-mute); opacity: 1; }
+.field select option { background: var(--field); color: var(--ink); }
+.app input[type="checkbox"] { accent-color: var(--accent); }
+.app :is(button, input, select):focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.room-pill-toggle:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+.room-pill-toggle:not(:has(input:checked)) .room-name { color: var(--ink-mute); }
+.room-pill-toggle:not(:has(input:checked)) .room-dot { opacity: .45; }
+.modal { color: var(--ink); max-height: 90dvh; overflow-y: auto; }
+.modal-body > .modal-footer { padding: 16px 0 0; flex-wrap: wrap; }
+.event-time, .event-people { opacity: 1; color: var(--ink-soft); }
+.event-recurrence { font-size: 9px; color: var(--ink-soft); }
+.assistance-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--danger); display: inline-block; margin-left: 4px; flex-shrink: 0; }
+.assistance-value { color: var(--danger); }
+.modal--christmas .btn-cancel:hover { background: #ffffff14; color: #fff7e5; }
+.modal--christmas .btn-request:hover { background: #f0c7bd14; }
+@media (prefers-reduced-motion: reduce) {
+  .app *, .app *::before, .app *::after { animation: none !important; transition: none !important; }
+}
+
+.cal-cell.full .today-num { color: var(--on-today); }
